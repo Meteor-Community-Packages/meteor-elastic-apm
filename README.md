@@ -1,13 +1,16 @@
 # meteor-elastic-apm
 Performance Monitoring for Meteor in Elastic APM
 
-[![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/assets/screenshot.png)](https://github.com/kschingiz/meteor-elastic-apm)
+[![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/screenshot.png)](https://github.com/kschingiz/meteor-elastic-apm)
 
 # why do we need this
 It's time to say goodbye to Kadira.
   1. Kadira is too outdated
   2. No one is maintaining the Kadira server and Kadira agent
   3. If you don't want to use Galaxy, then you don't have any Meteor APM available
+
+# project status - ALPHA
+This package is in deep development and can't be used in production.
 
 # getting started
 ```
