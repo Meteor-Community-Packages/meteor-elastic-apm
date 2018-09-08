@@ -1,5 +1,5 @@
 # meteor-elastic-apm
-Performance Monitoring for Meteor in Elastic APM
+Performance Monitoring for Meteor based on Elastic APM
 
 [![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/screenshot.png)](https://github.com/kschingiz/meteor-elastic-apm)
 
