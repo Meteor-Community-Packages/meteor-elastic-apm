@@ -81,7 +81,6 @@ function start(apm){
           var ret = originalFunc.apply(this, arguments);
 
           if(transaction && transaction.__span) {
-            console.log("end new span", transaction.__span.name);
             transaction.__span.end();
           }
           return ret;
