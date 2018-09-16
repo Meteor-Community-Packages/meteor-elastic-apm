@@ -28,7 +28,12 @@ function start(apm){
       const response = originalCall.call(HTTP, method, url, options, asyncCallback);
 
       if(!asyncCallback){
-        transaction.end(arguments);
+        if(transaction){
+          transaction.end(arguments);
+        }
+        if(span){
+          span.end();
+        }
       }
       return response;
     } catch(ex) {
