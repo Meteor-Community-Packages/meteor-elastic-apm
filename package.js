@@ -16,7 +16,7 @@ Npm.depends({
 
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.7.0.5');
+  api.versionsFrom('METEOR@1.2');
   api.use('ecmascript');
   api.use('meteorhacks:meteorx@1.4.1', ['server']);
 

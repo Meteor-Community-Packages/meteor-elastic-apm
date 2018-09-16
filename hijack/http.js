@@ -55,7 +55,7 @@ function start(apm){
 
     res.on('finish', () => {
       span.end();
-      transaction.__span = apm.startSpan("close");
+      transaction.__span = apm.startSpan("sending");
     });
     res.socket.on('close', () => {
       if(transaction){
