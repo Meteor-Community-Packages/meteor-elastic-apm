@@ -31,7 +31,8 @@ Agent.start(options);
   2. Meteor pub/sub, tracks publications response time
   3. Meteor pub/sub - operations, how much documents was added, updated, removed
   4. Async ops inside methods and pubs, for example http requests
-  5. Errors - with detailed information and stack traces
+  5. Incoming and outcoming HTTP requests
+  6. Errors - with detailed information and stack traces
 
 
 # API
