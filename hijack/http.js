@@ -1,52 +1,53 @@
 import { HTTP } from 'meteor/http';
+import http from 'http';
+import https from 'https';
+import url from 'url';
 
 function start(apm){
-  // monitor outcoming http requests
-  const originalCall = HTTP.call;
-  HTTP.call = function(method, url, options, callback) {
-    let transaction = null;
-    let span = null;
-    if(!apm.currentTransaction){
-      transaction = apm.startTransaction(url, "http.outcoming");
-    } else {
-      span = apm.startSpan(`http:${url}`, "http");
+  const protocolRequestMethods = {
+    'http': http.request,
+    'https': https.request
+  }
+
+  const newRequestFn = function(protocol, options, callback){
+    // we don't want to catch elastic requests, it causes recursive requests handling
+    const userAgent = ((options && options.headers) ? options.headers['User-Agent'] : '') || '';
+    if(userAgent.includes('elastic-apm')){
+      return protocolRequestMethods[protocol].call(this, options, callback);
     }
 
-    let asyncCallback;
-    if(callback){
-      asyncCallback = function(){
-        if(transaction){
-          transaction.end(arguments);
-        }
-        if(span){
-          span.end();
-        }
-        callback.apply(null, arguments);
-      };
-    }
-    try {
-      const response = originalCall.call(HTTP, method, url, options, asyncCallback);
+    const apmOptions = (typeof options === 'string') ? url.parse(options) : options;
+    const eventName = `${apmOptions.method}:${protocol}//${apmOptions.headers.host}${apmOptions.path}`
+    const eventType = "http.outcoming";
+    const transaction = apm.currentTransaction || apm.startTransaction(eventName, eventType);
+    const span = apm.startSpan(eventName, 'http');
 
-      if(!asyncCallback){
-        if(transaction){
-          transaction.end(arguments);
-        }
-        if(span){
-          span.end();
-        }
+    transaction.__span = span;
+    const request = protocolRequestMethods[protocol].call(this, options, callback);
+
+    const requestEnd = function(error){
+      if(error){
+        apm.captureError(error);
       }
-      return response;
-    } catch(ex) {
       if(transaction){
-        transaction.end(arguments);
+        if(transaction.__span){
+          transaction.__span.end();
+        }
+        if(transaction.type === "http.outcoming"){
+          transaction.end();
+        }
       }
-      if(span){
-        span.end();
-      }
-
-      throw ex;
     }
+
+    request.on('error', requestEnd);
+    request.on('response', function (response) {
+      response.on('end', requestEnd);
+      response.on('error', requestEnd);
+    });
+
+    return request;
   };
+  http.request = newRequestFn.bind(http, 'http');
 
   // monitor incoming http request
   WebApp.connectHandlers.use('/', function(req, res, next){
