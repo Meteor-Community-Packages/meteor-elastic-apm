@@ -3,15 +3,12 @@ function start(apm){
     const originalProcessMessage = sessionProto.processMessage;
     sessionProto.processMessage = function(msg) {
       if(msg.msg == 'method' || msg.msg == 'sub') {
-        // const user = Meteor.user();
-        // apm.setUserContext(user || {});
-
-        apm.setCustomContext(msg.params || {});
-
         const name = msg.msg === "method" ? msg.method : msg.name;
         const type = msg.msg;
-
         const transaction = apm.startTransaction(name, type);
+        
+        apm.setCustomContext(msg.params || {});
+        apm.setUserContext({ id: this.userId || "Not authorized"});
 
         const waitTimeSpan = apm.startSpan("wait");
         transaction.__span = waitTimeSpan;
