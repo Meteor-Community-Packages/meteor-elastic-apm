@@ -32,26 +32,41 @@ Meteor Up is a production quality Meteor app deployment tool. We expect you alre
 1. `mup ssh`
 2. `wget https://raw.githubusercontent.com/elastic/apm-server/master/apm-server.yml && cp apm-server.yml /etc/apm-server/apm-server.yml`
 3. Now you need to edit /etc/apm-server/apm-server.yml, at least you need to add you elastic search url under `output.elasticsearch`. When you finish just close this terminal
-4. Now we need to add installing steps to our Dockerfile, by adding buildInstructions under docker property in mup.js file. Also we need to pass the apt-server.ym file from server to docker
+4. Now we need to update mup.js file to:
+  a) Install apm-server in app container
+  b) Pass apm-server config file into our app container
+  c) Start it everytime after deploy
 ```
-app: {
-  ...
-  volumes: {
-    '/etc/apm-server/apm-server.yml': '/etc/apm-server/apm-server.yml'
+{
+  app: {
+    ...
+    volumes: {
+      '/etc/apm-server/apm-server.yml': '/etc/apm-server/apm-server.yml'
+    },
+    docker: {
+        ...
+        buildInstructions: [
+        // https://www.elastic.co/guide/en/apm/server/current/setup-repositories.html
+        'RUN apt-get install wget -y',
+        'RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -',
+        'RUN apt-get install apt-transport-https',
+        'RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list',
+        'RUN apt-get update && apt-get install apm-server -y',
+        'RUN update-rc.d apm-server defaults 95 10'
+        ]
+    }
+    ...
   },
-  docker: {
-      ...
-      buildInstructions: [
-      // https://www.elastic.co/guide/en/apm/server/current/setup-repositories.html
-      'RUN apt-get install wget -y',
-      'RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -',
-      'RUN apt-get install apt-transport-https',
-      'RUN echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-6.x.list',
-      'RUN apt-get update && apt-get install apm-server -y',
-      'RUN update-rc.d apm-server defaults 95 10'
-      ]
-  }
   ...
+  hooks: {
+    // Run apm-server
+    'post.deploy'(api) {
+      return api.runSSHCommand(
+        api.getConfig().servers.one,
+        'docker exec development service apm-server start'
+      );
+    }
+  },
 }
 ```
 
