@@ -1,7 +1,7 @@
 # meteor-elastic-apm
 Performance Monitoring for Meteor based on Elastic APM
 
-[![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/screenshot.png)](https://github.com/kschingiz/meteor-elastic-apm)
+[![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/meteor-methods-screen1.png)](https://github.com/kschingiz/meteor-elastic-apm)
 
 # why do we need this
 We use Kadira APM in our company. We love it, thanks to @arunoda, you made incredible service that helped thousands of Meteor developers to make their app better, BUT we feel that someday Kadira will be too deprecated and will not support current Meteor features, because no one maintains it.
