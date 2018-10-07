@@ -1,6 +1,6 @@
 Package.describe({
   name: 'kschingiz:meteor-elastic-apm',
-  version: '0.0.3',
+  version: '0.0.4',
   // Brief, one-line summary of the package.
   summary: 'Performance monitoring for Meteor based on Elastic APM',
   // URL to the Git repository containing the source code for this package.
