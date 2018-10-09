@@ -19,8 +19,7 @@ function start(apm){
         ret[m] = function() {
           Array.prototype.unshift.call(arguments, name);
 
-          return self.mongo[m].apply(mongo, arguments);
-          return OptimizedApply(self.mongo, self.mongo[m], arguments);
+          return self.mongo[m].apply(self.mongo, arguments);
         };
       }
     });
