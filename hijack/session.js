@@ -6,7 +6,7 @@ function start(apm){
         const name = msg.msg === "method" ? msg.method : msg.name;
         const type = msg.msg;
         const transaction = apm.startTransaction(name, type);
-        
+
         apm.setCustomContext(msg.params || {});
         apm.setUserContext({ id: this.userId || "Not authorized"});
 
@@ -65,13 +65,15 @@ function start(apm){
     sessionProto.protocol_handlers.unsub = function(msg, unblock) {
       if(msg.__transaction && msg.__transaction.__span){
         msg.__transaction.__span.end();
+        msg.__transaction.__span = apm.startSpan("execution");
       }
 
-      const execSpan = apm.startSpan("execution");
       const response = originalUnSubHandler.call(this, msg, unblock);
-      execSpan.end();
 
       if(msg.__transaction){
+        if(msg.__transaction.__span){
+          msg.__transaction.__span.end();
+        }
         msg.__transaction.end();
       }
       return response;
