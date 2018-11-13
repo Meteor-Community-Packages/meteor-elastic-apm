@@ -25,7 +25,7 @@ Agent.start = function(config){
 
       try {
         startAgent.apply(Agent, [config]);
-        console.log("meteor-elastic-apm completed instrumeting");
+        console.log("meteor-elastic-apm completed instrumenting");
       } catch(e){
         console.error("Could not start meteor-elastic-apm");
         console.error(e);
