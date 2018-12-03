@@ -20,7 +20,7 @@ Package.onUse(function(api) {
   api.use('ecmascript');
   api.use('meteorhacks:meteorx@1.4.1', ['server']);
 
-  api.mainModule('meteor-elastic-apm.js');
+  api.mainModule('meteor-elastic-apm.js', 'server');
 });
 
 Package.onTest(function(api) {
