@@ -1,3 +1,7 @@
+import {
+  Subscription
+} from "./meteorx.js";
+
 function start(apm){
   const Fiber = require('fibers');
 
@@ -59,7 +63,7 @@ function start(apm){
     });
   };
 
-  wrapSubscription(MeteorX.Subscription.prototype);
+  wrapSubscription(Subscription.prototype);
 }
 
 module.exports = start;
