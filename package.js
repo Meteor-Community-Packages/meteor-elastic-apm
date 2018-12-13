@@ -1,6 +1,6 @@
 Package.describe({
   name: 'kschingiz:meteor-elastic-apm',
-  version: '0.0.6',
+  version: '0.0.5',
   // Brief, one-line summary of the package.
   summary: 'Performance monitoring for Meteor based on Elastic APM',
   // URL to the Git repository containing the source code for this package.
@@ -11,17 +11,21 @@ Package.describe({
 });
 
 Npm.depends({
-  'elastic-apm-node': '2.0.1'
+  'elastic-apm-node': '1.12.0'
 });
 
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.2');
-  api.use(['ecmascript']);
+  api.use('ecmascript');
+  api.use('meteorhacks:meteorx@1.4.1', ['server']);
+
   api.mainModule('meteor-elastic-apm.js', 'server');
 });
 
 Package.onTest(function(api) {
-  api.use(['ecmascript', 'tinytest', 'kschingiz:meteor-elastic-apm']);
+  api.use('ecmascript');
+  api.use('tinytest');
+  api.use('kschingiz:meteor-elastic-apm');
   api.mainModule('meteor-elastic-apm-tests.js');
 });

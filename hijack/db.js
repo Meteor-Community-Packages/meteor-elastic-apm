@@ -1,8 +1,3 @@
-import {
-  MongoConnection,
-  MongoCursor,
-} from "./meteorx.js";
-
 function start(apm){
   // This hijack is important to make sure, collections created before
   // we hijack dbOps, even gets tracked.
@@ -33,7 +28,7 @@ function start(apm){
   };
 
   function hijackDBOps() {
-    const mongoConnectionProto = MongoConnection.prototype;
+    const mongoConnectionProto = Meteor.Collection.prototype;
     //findOne is handled by find - so no need to track it
     //upsert is handles by update
     ['find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(func) {
@@ -69,7 +64,7 @@ function start(apm){
       };
     });
 
-    var cursorProto = MongoCursor.prototype;
+    var cursorProto = MeteorX.MongoCursor.prototype;
     ['forEach', 'map', 'fetch', 'count', 'observeChanges', 'observe', 'rewind'].forEach(function(type) {
       var originalFunc = cursorProto[type];
       cursorProto[type] = function() {

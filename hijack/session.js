@@ -1,7 +1,3 @@
-import {
-  Session
-} from "./meteorx.js";
-
 function start(apm){
   function wrapSession(sessionProto) {
     const originalProcessMessage = sessionProto.processMessage;
@@ -84,7 +80,7 @@ function start(apm){
     };
   };
 
-  wrapSession(Session.prototype);
+  wrapSession(MeteorX.Session.prototype);
 }
 
 module.exports = start;
