@@ -1,7 +1,11 @@
-function start(apm){
+function start(apm) {
   Object.keys(Meteor.default_server.method_handlers).forEach(methodName => {
     const handler = Meteor.default_server.method_handlers[methodName];
-    wrapMethodHanderForErrors(methodName, handler, Meteor.default_server.method_handlers);
+    wrapMethodHanderForErrors(
+      methodName,
+      handler,
+      Meteor.default_server.method_handlers
+    );
   });
 
   var originalMeteorMethods = Meteor.methods;
@@ -17,12 +21,12 @@ function start(apm){
     methodMap[name] = function() {
       try {
         return originalHandler.apply(this, arguments);
-      } catch(ex) {
-        if(ex) {
+      } catch (ex) {
+        if (ex) {
           // sometimes error may be just an string or a primitive
           // in that case, we need to make it a psuedo error
-          if(typeof ex !== 'object') {
-            ex = {message: ex, stack: ex};
+          if (typeof ex !== "object") {
+            ex = { message: ex, stack: ex };
           }
           // Now we are marking this error to get tracked via methods
           // But, this also triggers a Meteor.debug call and
@@ -30,12 +34,12 @@ function start(apm){
           // We also track Meteor.debug errors and want to stop
           // tracking this error. That's why we do this
           // See Meteor.debug error tracking code for more
-          ex.stack = {stack: ex.stack, source: 'method'};
+          ex.stack = { stack: ex.stack, source: "method" };
         }
-        apm.captureError(ex)
+        apm.captureError(ex);
         throw ex;
       }
-    }
+    };
   }
 }
 
