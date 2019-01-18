@@ -1,5 +1,7 @@
-function start(apm){
-  const Fiber = require('fibers');
+import { Subscription } from "./../meteorx";
+
+function start(apm) {
+  const Fiber = require("fibers");
 
   function wrapSubscription(subscriptionProto) {
     // If the ready event runs outside the Fiber, Kadira._getInfo() doesn't work.
@@ -10,15 +12,15 @@ function start(apm){
       const transaction = apm.currentTransaction;
       if (transaction) {
         this.__transaction = transaction;
-      };
+      }
       originalRunHandler.call(this);
-    }
+    };
 
     const originalReady = subscriptionProto.ready;
     subscriptionProto.ready = function() {
       const transaction = this.__transaction;
-      if(transaction){
-        if(transaction.__span){
+      if (transaction) {
+        if (transaction.__span) {
           transaction.__span.end();
         }
         transaction.end();
@@ -33,8 +35,8 @@ function start(apm){
       if (err) {
         // I hope that this is the same transaction from './session.js' L52
         const transaction = this.__transaction;
-        if(transaction){
-          if(transaction.__span){
+        if (transaction) {
+          if (transaction.__span) {
             transaction.__span.end();
           }
           apm.captureError(err);
@@ -46,20 +48,22 @@ function start(apm){
     };
 
     //tracking the pub/sub operations
-    ['added', 'changed', 'removed'].forEach(function(funcName) {
+    ["added", "changed", "removed"].forEach(function(funcName) {
       const originalFunc = subscriptionProto[funcName];
       subscriptionProto[funcName] = function(collectionName, id, fields) {
-
-        const transaction = apm.startTransaction(`${collectionName}:${funcName}`, "sub - operations");
+        const transaction = apm.startTransaction(
+          `${collectionName}:${funcName}`,
+          "sub - operations"
+        );
         const res = originalFunc.call(this, collectionName, id, fields);
 
         transaction.end(JSON.stringify(fields));
         return res;
       };
     });
-  };
+  }
 
-  wrapSubscription(MeteorX.Subscription.prototype);
+  wrapSubscription(Subscription.prototype);
 }
 
 module.exports = start;

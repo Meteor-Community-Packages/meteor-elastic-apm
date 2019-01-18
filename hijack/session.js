@@ -1,14 +1,16 @@
-function start(apm){
+import { Session } from "./../meteorx";
+
+function start(apm) {
   function wrapSession(sessionProto) {
     const originalProcessMessage = sessionProto.processMessage;
     sessionProto.processMessage = function(msg) {
-      if(msg.msg == 'method' || msg.msg == 'sub') {
+      if (msg.msg == "method" || msg.msg == "sub") {
         const name = msg.msg === "method" ? msg.method : msg.name;
         const type = msg.msg;
         const transaction = apm.startTransaction(name, type);
 
         apm.setCustomContext(msg.params || {});
-        apm.setUserContext({ id: this.userId || "Not authorized"});
+        apm.setUserContext({ id: this.userId || "Not authorized" });
 
         const waitTimeSpan = apm.startSpan("wait");
         transaction.__span = waitTimeSpan;
@@ -25,10 +27,9 @@ function start(apm){
     sessionProto.protocol_handlers.method = function(msg, unblock) {
       var self = this;
 
-
-      if(msg.__transaction) {
+      if (msg.__transaction) {
         // some tracking span created before
-        if(msg.__transaction.__span){
+        if (msg.__transaction.__span) {
           msg.__transaction.__span.end();
           msg.__transaction.__span = null;
         }
@@ -46,8 +47,8 @@ function start(apm){
     sessionProto.protocol_handlers.sub = function(msg, unblock) {
       const self = this;
 
-      if(msg.__transaction) {
-        if(msg.__transaction.__span){
+      if (msg.__transaction) {
+        if (msg.__transaction.__span) {
           msg.__transaction.__span.end();
         }
       }
@@ -63,24 +64,24 @@ function start(apm){
     //to capture the currently processing message
     const originalUnSubHandler = sessionProto.protocol_handlers.unsub;
     sessionProto.protocol_handlers.unsub = function(msg, unblock) {
-      if(msg.__transaction && msg.__transaction.__span){
+      if (msg.__transaction && msg.__transaction.__span) {
         msg.__transaction.__span.end();
         msg.__transaction.__span = apm.startSpan("execution");
       }
 
       const response = originalUnSubHandler.call(this, msg, unblock);
 
-      if(msg.__transaction){
-        if(msg.__transaction.__span){
+      if (msg.__transaction) {
+        if (msg.__transaction.__span) {
           msg.__transaction.__span.end();
         }
         msg.__transaction.end();
       }
       return response;
     };
-  };
+  }
 
-  wrapSession(MeteorX.Session.prototype);
+  wrapSession(Session.prototype);
 }
 
 module.exports = start;

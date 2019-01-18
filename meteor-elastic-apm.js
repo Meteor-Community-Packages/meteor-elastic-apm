@@ -1,32 +1,36 @@
 const Agent = require("elastic-apm-node");
 
-const errors = require('./hijack/errors');
-const http = require('./hijack/http');
-const session = require('./hijack/session');
-const subscription = require('./hijack/subscription');
-// whoops `async` name is reserved
-const asyncH = require('./hijack/async');
-const db = require('./hijack/db');
+import {
+  MongoOplogDriver,
+  MongoPollingDriver,
+  Multiplexer,
+  Server,
+  Session,
+  Subscription
+} from "./meteorx.js";
 
+import hijack from "./hijack";
+
+const { async, db, errors, http, session, subscription } = hijack;
 // this is where our wrap code starts
 
 const startAgent = Agent.start;
-Agent.start = function(config){
+Agent.start = function(config) {
   config = config || {};
 
-  if(config.active !== false){
-    MeteorX.onReady(() => {
+  if (config.active !== false) {
+    Meteor.startup(() => {
       session(Agent);
       subscription(Agent);
       errors(Agent);
-      asyncH(Agent);
+      async(Agent);
       db(Agent);
       http(Agent);
 
       try {
         startAgent.apply(Agent, [config]);
         console.log("meteor-elastic-apm completed instrumenting");
-      } catch(e){
+      } catch (e) {
         console.error("Could not start meteor-elastic-apm");
         console.error(e);
       }
@@ -35,7 +39,5 @@ Agent.start = function(config){
     console.warn("meteor-elastic-apm is not active");
   }
 };
-
-
 
 module.exports = Agent;
