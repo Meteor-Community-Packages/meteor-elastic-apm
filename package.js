@@ -11,7 +11,7 @@ Package.describe({
 });
 
 Npm.depends({
-  "elastic-apm-node": "1.12.0"
+  "elastic-apm-node": "2.11.4"
 });
 
 Package.onUse(function(api) {
