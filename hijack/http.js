@@ -16,11 +16,12 @@ function start(apm) {
       return protocolRequestMethods[protocol].call(this, options, callback);
     }
 
-    const apmOptions =
-      typeof options === "string" ? url.parse(options) : options;
-    const eventName = `${apmOptions.method}:${protocol}//${
-      apmOptions.headers.host
-    }${apmOptions.path}`;
+    const apmOptions = typeof options === "string" ? url.parse(options) : options;
+
+    let { method, host, path } = apmOptions;
+    if (!host) host = apmOptions.hostname;
+
+    const eventName = `${method}:${protocol}//${host}${path}`;
     const eventType = "http.outcoming";
     const transaction =
       apm.currentTransaction || apm.startTransaction(eventName, eventType);
