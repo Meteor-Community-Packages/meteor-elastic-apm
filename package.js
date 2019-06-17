@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 Package.describe({
   name: 'kschingiz:meteor-elastic-apm',
   version: '0.0.5',
@@ -11,9 +12,9 @@ Package.describe({
 });
 
 Npm.depends({
-  'elastic-apm-node': '1.12.0'
+  'elastic-apm-node': '2.11.6',
+  shimmer: '1.2.1'
 });
-
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.2');

@@ -1,0 +1,33 @@
+{
+  "name": "meteor-elastic-apm",
+  "version": "2.0.0",
+  "description": "Performance Monitoring for Meteor based on Elastic APM",
+  "main": "meteor-elastic-apm.js",
+  "scripts": {
+    "lint": "eslint ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kschingiz/meteor-elastic-apm.git"
+  },
+  "author": "Shynggys Kengessov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kschingiz/meteor-elastic-apm/issues"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "prettier": "1.15.2"
+  },
+  "homepage": "https://github.com/kschingiz/meteor-elastic-apm#readme",
+  "dependencies": {
+    "elastic-apm-node": "^2.11.6",
+    "fibers": "^4.0.1",
+    "shimmer": "^1.2.1"
+  }
+}
