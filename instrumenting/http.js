@@ -15,7 +15,13 @@ function start(apm, WebApp) {
       }
 
       const apmOptions = typeof options === 'string' ? url.parse(options) : options;
-      const eventName = `${apmOptions.method}://${apmOptions.headers.host}${apmOptions.path}`;
+
+      const { method, path } = apmOptions;
+      let { host } = apmOptions;
+
+      if (!host) host = apmOptions.hostname;
+
+      const eventName = `${method}://${host}${path}`;
       const eventType = HTTP_OUTCOMING;
       const transaction = apm.currentTransaction || apm.startTransaction(eventName, eventType);
       const span = apm.startSpan(eventName, HTTP);
