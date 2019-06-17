@@ -10,13 +10,12 @@ const instrumentAsync = require('./instrumenting/async');
 const instrumentDB = require('./instrumenting/db');
 
 // this is where our wrap code starts
-
 shimmer.wrap(Agent, 'start', function(startAgent) {
   return function(...args) {
     const config = args[0] || {};
 
     if (config.active !== false) {
-      MeteorX.onReady(() => {
+      Meteor.startup(() => {
         try {
           instrumentErrors(Agent);
           instrumentHttp(Agent, WebApp);

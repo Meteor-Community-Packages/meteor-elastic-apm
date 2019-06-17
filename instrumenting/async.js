@@ -1,5 +1,5 @@
-const shimmer = require('shimmer');
-const { ASYNC } = require('./../constants');
+import shimmer from 'shimmer';
+import { ASYNC } from '../constants';
 
 function start(agent, Fibers) {
   shimmer.wrap(Fibers, 'yield', function(original) {

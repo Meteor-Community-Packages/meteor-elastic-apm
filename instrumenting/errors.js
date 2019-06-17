@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const shimmer = require('shimmer');
+import shimmer from 'shimmer';
 
 function start(agent) {
   function wrapMethodHanderForErrors(name, originalHandler, methodMap) {
