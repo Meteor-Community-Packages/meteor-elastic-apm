@@ -43,19 +43,20 @@ function start(apm, Subscription) {
     });
 
     // tracking the pub/sub operations
-    // ['added', 'changed', 'removed'].forEach(function(funcName) {
-    //   const originalFunc = subscriptionProto[funcName];
-    //   subscriptionProto[funcName] = function(collectionName, id, fields) {
-    //     const transaction = apm.startTransaction(
-    //       `${collectionName}:${funcName}`,
-    //       'sub - operations'
-    //     );
-    //     const res = originalFunc.call(this, collectionName, id, fields);
+    ['added', 'changed', 'removed'].forEach(function(funcName) {
+      shimmer.wrap(subscriptionProto, funcName, function(original) {
+        return function(collectionName, id, fields) {
+          const transaction = apm.startTransaction(
+            `${collectionName}:${funcName}`,
+            'sub - operations'
+          );
+          const res = original.call(this, collectionName, id, fields);
 
-    //     transaction.end(JSON.stringify(fields));
-    //     return res;
-    //   };
-    // });
+          transaction.end(JSON.stringify(fields));
+          return res;
+        };
+      });
+    });
   }
 
   wrapSubscription(Subscription.prototype);
