@@ -1,17 +1,17 @@
 import shimmer from 'shimmer';
 
-function start(apm, Meteor, MongoCursor) {
+function start(agent, Meteor, MongoCursor) {
   const mongoConnectionProto = Meteor.Collection.prototype;
   // findOne is handled by find - so no need to track it
   // upsert is handles by update
   ['find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(func) {
     shimmer.wrap(mongoConnectionProto, func, function(original) {
       return function(...args) {
-        const transaction = apm.currentTransaction;
+        const transaction = agent.currentTransaction;
 
         const collName = this._name;
         if (transaction) {
-          const dbExecSpan = apm.startSpan(`${collName}.${func}`, 'db');
+          const dbExecSpan = agent.startSpan(`${collName}.${func}`, 'db');
           transaction.__span = dbExecSpan;
         }
 
@@ -43,9 +43,9 @@ function start(apm, Meteor, MongoCursor) {
       return function(...args) {
         const cursorDescription = this._cursorDescription;
 
-        const transaction = apm.currentTransaction;
+        const transaction = agent.currentTransaction;
         if (transaction) {
-          const span = apm.startSpan(`${cursorDescription.collectionName}:${type}`, 'db');
+          const span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, 'db');
           transaction.__span = span;
         }
 

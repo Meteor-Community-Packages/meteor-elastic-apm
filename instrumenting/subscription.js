@@ -1,10 +1,10 @@
 import shimmer from 'shimmer';
 
-function start(apm, Subscription) {
+function start(agent, Subscription) {
   function wrapSubscription(subscriptionProto) {
     shimmer.wrap(subscriptionProto, '_runHandler', function(original) {
       return function(...args) {
-        const transaction = apm.currentTransaction;
+        const transaction = agent.currentTransaction;
         if (transaction) {
           this.__transaction = transaction;
         }
@@ -34,7 +34,7 @@ function start(apm, Subscription) {
           if (transaction.__span) {
             transaction.__span.end();
           }
-          apm.captureError(err);
+          agent.captureError(err);
           transaction.end();
         }
 
@@ -46,7 +46,7 @@ function start(apm, Subscription) {
     ['added', 'changed', 'removed'].forEach(function(funcName) {
       shimmer.wrap(subscriptionProto, funcName, function(original) {
         return function(collectionName, id, fields) {
-          const transaction = apm.startTransaction(
+          const transaction = agent.startTransaction(
             `${collectionName}:${funcName}`,
             'sub - operations'
           );

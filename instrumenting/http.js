@@ -4,7 +4,7 @@ import shimmer from 'shimmer';
 
 import { HTTP, HTTP_OUTCOMING, HTTP_INCOMING, EXECUTION, SENDING } from '../constants';
 
-function start(apm, WebApp) {
+function start(agent, WebApp) {
   // monitor outcoming http requests
   shimmer.wrap(http, 'request', function(original) {
     return function(options, callback) {
@@ -23,15 +23,15 @@ function start(apm, WebApp) {
 
       const eventName = `${method}://${host}${path}`;
       const eventType = HTTP_OUTCOMING;
-      const transaction = apm.currentTransaction || apm.startTransaction(eventName, eventType);
-      const span = apm.startSpan(eventName, HTTP);
+      const transaction = agent.currentTransaction || agent.startTransaction(eventName, eventType);
+      const span = agent.startSpan(eventName, HTTP);
 
       transaction.__span = span;
       const request = original.call(this, options, callback);
 
       const requestEnd = function(error) {
         if (error) {
-          apm.captureError(error);
+          agent.captureError(error);
         }
         if (transaction) {
           if (transaction.__span) {
@@ -55,12 +55,12 @@ function start(apm, WebApp) {
 
   // monitor incoming http request
   WebApp.connectHandlers.use('/', function(req, res, next) {
-    const transaction = apm.startTransaction(`${req.method}:${req.url}`, HTTP_INCOMING);
-    const span = apm.startSpan(EXECUTION);
+    const transaction = agent.startTransaction(`${req.method}:${req.url}`, HTTP_INCOMING);
+    const span = agent.startSpan(EXECUTION);
 
     res.on('finish', () => {
       span.end();
-      transaction.__span = apm.startSpan(SENDING);
+      transaction.__span = agent.startSpan(SENDING);
     });
     res.socket.on('close', () => {
       if (transaction) {

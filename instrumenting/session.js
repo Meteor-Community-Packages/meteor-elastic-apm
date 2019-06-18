@@ -1,18 +1,18 @@
 import shimmer from 'shimmer';
 
-function start(apm, Session) {
+function start(agent, Session) {
   function wrapSession(sessionProto) {
     shimmer.wrap(sessionProto, 'processMessage', function(original) {
       return function(msg) {
         if (msg.msg === 'method' || msg.msg === 'sub') {
           const name = msg.msg === 'method' ? msg.method : msg.name;
           const type = msg.msg;
-          const transaction = apm.startTransaction(name, type);
+          const transaction = agent.startTransaction(name, type);
 
-          apm.setCustomContext(msg.params || {});
-          apm.setUserContext({ id: this.userId || 'Not authorized' });
+          agent.setCustomContext(msg.params || {});
+          agent.setUserContext({ id: this.userId || 'Not authorized' });
 
-          const waitTimeSpan = apm.startSpan('wait');
+          const waitTimeSpan = agent.startSpan('wait');
           transaction.__span = waitTimeSpan;
           msg.__transaction = transaction;
         }
@@ -30,7 +30,7 @@ function start(apm, Session) {
           }
         }
 
-        const execSpan = apm.startSpan('execution');
+        const execSpan = agent.startSpan('execution');
         const response = original.call(this, msg, unblock);
 
         execSpan.end();
@@ -53,7 +53,7 @@ function start(apm, Session) {
         }
 
         if (msg.__transaction) {
-          msg.__transaction.__span = apm.startSpan('execution');
+          msg.__transaction.__span = agent.startSpan('execution');
         }
 
         return original.call(self, msg, unblock);
@@ -64,7 +64,7 @@ function start(apm, Session) {
       return function(msg, unblock) {
         if (msg.__transaction && msg.__transaction.__span) {
           msg.__transaction.__span.end();
-          msg.__transaction.__span = apm.startSpan('execution');
+          msg.__transaction.__span = agent.startSpan('execution');
         }
 
         const response = original.call(this, msg, unblock);
