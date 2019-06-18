@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const shimmer = require('shimmer');
 const Fibers = require('fibers');
 const Agent = require('elastic-apm-node');
