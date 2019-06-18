@@ -24,7 +24,7 @@ function start(agent, Fibers) {
         this._apmSpan.end();
         this._apmSpan = null;
       }
-      return original.call(this, args);
+      return original.apply(this, args);
     };
   });
 }

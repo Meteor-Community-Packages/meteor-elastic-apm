@@ -2,6 +2,8 @@ const shimmer = require('shimmer');
 const Fibers = require('fibers');
 const Agent = require('elastic-apm-node');
 
+const { Session, Subscription, MongoCursor } = require('./meteorx');
+
 const instrumentErrors = require('./instrumenting/errors');
 const instrumentHttp = require('./instrumenting/http');
 const instrumentSession = require('./instrumenting/session');
@@ -17,12 +19,12 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
     if (config.active !== false) {
       Meteor.startup(() => {
         try {
-          instrumentErrors(Agent);
+          instrumentErrors(Agent, Meteor);
           instrumentHttp(Agent, WebApp);
-          instrumentSession(Agent);
-          instrumentSubscription(Agent);
+          instrumentSession(Agent, Session);
+          instrumentSubscription(Agent, Subscription);
           instrumentAsync(Agent, Fibers);
-          instrumentDB(Agent);
+          instrumentDB(Agent, Meteor, MongoCursor);
 
           startAgent.apply(Agent, args);
           console.log('meteor-elastic-apm completed instrumenting');
