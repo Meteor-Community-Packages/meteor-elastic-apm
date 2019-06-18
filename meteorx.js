@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // Various tricks for accessing "private" Meteor APIs borrowed from the
 // now-unmaintained meteorhacks:meteorx package.
 
@@ -13,9 +14,9 @@ function getSession() {
   const server = Meteor.default_server;
 
   server._handleConnect(fakeSocket, {
-    msg: "connect",
-    version: "pre1",
-    support: ["pre1"]
+    msg: 'connect',
+    version: 'pre1',
+    support: ['pre1']
   });
 
   const session = fakeSocket._meteorSession;
@@ -28,13 +29,13 @@ function getSession() {
 const session = getSession();
 export const Session = session.constructor;
 
-const collection = new Mongo.Collection("__dummy_coll_" + Random.id());
+const collection = new Mongo.Collection(`__dummy_coll_${Random.id()}`);
 collection.findOne();
 const cursor = collection.find();
 export const MongoCursor = cursor.constructor;
 
-function getMultiplexer(cursor) {
-  const handle = cursor.observeChanges({
+function getMultiplexer(multiCursor) {
+  const handle = multiCursor.observeChanges({
     added() {}
   });
   handle.stop();
@@ -43,45 +44,41 @@ function getMultiplexer(cursor) {
 
 export const Multiplexer = getMultiplexer(cursor).constructor;
 
-export const MongoConnection = MongoInternals.defaultRemoteCollectionDriver()
-  .mongo.constructor;
+export const MongoConnection = MongoInternals.defaultRemoteCollectionDriver().mongo.constructor;
 
-function getSubscription(session) {
+function getSubscription(subSession) {
   const subId = Random.id();
 
-  session._startSubscription(
+  subSession._startSubscription(
     function() {
       this.ready();
     },
     subId,
     [],
-    "__dummy_pub_" + Random.id()
+    `__dummy_pub_${Random.id()}`
   );
 
   const subscription =
-    session._namedSubs instanceof Map
-      ? session._namedSubs.get(subId)
-      : session._namedSubs[subId];
+    subSession._namedSubs instanceof Map
+      ? subSession._namedSubs.get(subId)
+      : subSession._namedSubs[subId];
 
-  session._stopSubscription(subId);
+  subSession._stopSubscription(subId);
 
   return subscription;
 }
 
 export const Subscription = getSubscription(session).constructor;
 
-function getObserverDriver(cursor) {
-  const multiplexer = getMultiplexer(cursor);
+function getObserverDriver(obsCursor) {
+  const multiplexer = getMultiplexer(obsCursor);
   return (multiplexer && multiplexer._observeDriver) || null;
 }
 
 function getMongoOplogDriver() {
   const driver = getObserverDriver(cursor);
-  let MongoOplogDriver = (driver && driver.constructor) || null;
-  if (
-    MongoOplogDriver &&
-    typeof MongoOplogDriver.cursorSupported !== "function"
-  ) {
+  const MongoOplogDriver = (driver && driver.constructor) || null;
+  if (MongoOplogDriver && typeof MongoOplogDriver.cursorSupported !== 'function') {
     return null;
   }
   return MongoOplogDriver;
@@ -90,7 +87,7 @@ function getMongoOplogDriver() {
 export const MongoOplogDriver = getMongoOplogDriver();
 
 function getMongoPollingDriver() {
-  const cursor = collection.find(
+  const driverCursor = collection.find(
     {},
     {
       limit: 20,
@@ -98,10 +95,10 @@ function getMongoPollingDriver() {
     }
   );
 
-  const driver = getObserverDriver(cursor);
+  const driver = getObserverDriver(driverCursor);
 
   // verify observer driver is a polling driver
-  if (driver && typeof driver.constructor.cursorSupported === "undefined") {
+  if (driver && typeof driver.constructor.cursorSupported === 'undefined') {
     return driver.constructor;
   }
 
