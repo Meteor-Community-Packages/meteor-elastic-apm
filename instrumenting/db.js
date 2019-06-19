@@ -3,7 +3,7 @@ import shimmer from 'shimmer';
 function start(agent, Meteor, MongoCursor) {
   const mongoConnectionProto = Meteor.Collection.prototype;
   // findOne is handled by find - so no need to track it
-  // upsert is handles by update
+  // upsert is handled by update
   ['find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(func) {
     shimmer.wrap(mongoConnectionProto, func, function(original) {
       return function(...args) {
