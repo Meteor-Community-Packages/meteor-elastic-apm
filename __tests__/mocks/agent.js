@@ -7,6 +7,7 @@ function newAgent() {
   agent.currentSpan = undefined;
   agent.currentTraceparent = undefined;
 
+  agent.captureError = jest.fn();
   agent.startSpan = jest.fn(() => ({
     end: jest.fn()
   }));
@@ -17,4 +18,4 @@ function newAgent() {
   return agent;
 }
 
-module.exports = { newAgent };
+module.exports = newAgent;

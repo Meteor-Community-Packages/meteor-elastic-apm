@@ -1,7 +1,9 @@
-const Fibers = {
-  yield: jest.fn(),
-  run: jest.fn(),
-  current: {}
-};
+function newFibers() {
+  return {
+    yield: jest.fn(),
+    run: jest.fn(),
+    current: {}
+  };
+}
 
-module.exports = Fibers;
+module.exports = newFibers;

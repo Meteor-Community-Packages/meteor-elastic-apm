@@ -62,8 +62,11 @@ function start(agent, Session) {
 
     shimmer.wrap(sessionProto.protocol_handlers, 'unsub', function(original) {
       return function(msg, unblock) {
-        if (msg.__transaction && msg.__transaction.__span) {
-          msg.__transaction.__span.end();
+        if (msg.__transaction) {
+          if (msg.__transaction.__span) {
+            msg.__transaction.__span.end();
+          }
+
           msg.__transaction.__span = agent.startSpan('execution');
         }
 
