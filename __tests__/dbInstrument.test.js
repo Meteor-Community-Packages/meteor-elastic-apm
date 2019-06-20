@@ -3,7 +3,7 @@ const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 const newMongoCursor = require('./mocks/mongoCursor');
 
-test('track meteor collection methods', function() {
+test('track meteor collection methods', () => {
   const agent = newAgent();
   const Meteor = newMeteor();
   const MongoCursor = newMongoCursor();
@@ -22,7 +22,7 @@ test('track meteor collection methods', function() {
   expect(agent.startSpan.mock.calls[0][1]).toBe('db');
 });
 
-test('ignore tracking meteor collection methods if no transaction', function() {
+test('ignore tracking meteor collection methods if no transaction', () => {
   const agent = newAgent();
   const Meteor = newMeteor();
   const MongoCursor = newMongoCursor();
@@ -37,7 +37,7 @@ test('ignore tracking meteor collection methods if no transaction', function() {
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });
 
-test('ignore track mongo cursor methods if no transaction', function() {
+test('ignore track mongo cursor methods if no transaction', () => {
   const agent = newAgent();
   const Meteor = newMeteor();
   const MongoCursor = newMongoCursor();
@@ -51,7 +51,7 @@ test('ignore track mongo cursor methods if no transaction', function() {
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });
 
-test('track mongo cursor methods', function() {
+test('track mongo cursor methods', () => {
   const agent = newAgent();
   const Meteor = newMeteor();
   const MongoCursor = newMongoCursor();

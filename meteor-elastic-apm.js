@@ -12,30 +12,36 @@ const instrumentSubscription = require('./instrumenting/subscription');
 const instrumentAsync = require('./instrumenting/async');
 const instrumentDB = require('./instrumenting/db');
 
-// this is where our wrap code starts
 shimmer.wrap(Agent, 'start', function(startAgent) {
   return function(...args) {
     const config = args[0] || {};
 
     if (config.active !== false) {
       Meteor.startup(() => {
-        try {
-          instrumentErrors(Agent, Meteor);
-          instrumentHttp(Agent, WebApp);
-          instrumentSession(Agent, Session);
-          instrumentSubscription(Agent, Subscription);
-          instrumentAsync(Agent, Fibers);
-          instrumentDB(Agent, Meteor, MongoCursor);
+        const [framework, version] = Meteor.release.split('@');
 
+        Agent.setFramework({
+          name: framework,
+          version
+        });
+
+        instrumentErrors(Agent, Meteor);
+        instrumentHttp(Agent, WebApp);
+        instrumentSession(Agent, Session);
+        instrumentSubscription(Agent, Subscription);
+        instrumentAsync(Agent, Fibers);
+        instrumentDB(Agent, Meteor, MongoCursor);
+
+        try {
           startAgent.apply(Agent, args);
-          console.log('meteor-elastic-apm completed instrumenting');
+
+          Agent.logger.info('meteor-elastic-apm completed instrumenting');
         } catch (e) {
-          console.error('Could not start meteor-elastic-apm');
-          console.error(e);
+          Agent.logger.error('Could not start meteor-elastic-apm');
         }
       });
     } else {
-      console.warn('meteor-elastic-apm is not active');
+      Agent.logger.warn('meteor-elastic-apm is not active');
     }
   };
 });

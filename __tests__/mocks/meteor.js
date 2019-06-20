@@ -9,6 +9,9 @@ Collection.prototype._dropIndex = jest.fn();
 
 function newMeteor() {
   return {
+    call: jest.fn(),
+    subscribe: jest.fn(),
+    publish: jest.fn(),
     Collection,
     methods(methodsMap) {
       this.default_server.method_handlers = {

@@ -2,7 +2,7 @@ const instrumentSession = require('./../instrumenting/session');
 const newAgent = require('./mocks/agent');
 const newSession = require('./mocks/session');
 
-test('track session method messages', function() {
+test('track session method messages', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -26,7 +26,7 @@ test('track session method messages', function() {
   expect(agent.startTransaction.mock.calls[0][1]).toBe('method');
 });
 
-test('track session sub messages', function() {
+test('track session sub messages', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -50,7 +50,7 @@ test('track session sub messages', function() {
   expect(agent.startTransaction.mock.calls[0][1]).toBe('sub');
 });
 
-test('ignore session message is not method and sub', function() {
+test('ignore session message is not method and sub', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -71,7 +71,7 @@ test('ignore session message is not method and sub', function() {
   expect(agent.startTransaction.mock.calls.length).toBe(0);
 });
 
-test('session meteor method call', function() {
+test('session meteor method call', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -98,7 +98,7 @@ test('session meteor method call', function() {
   expect(transaction.end.mock.calls.length).toBe(1);
 });
 
-test('session meteor method call with waitSpan', function() {
+test('session meteor method call with waitSpan', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -130,7 +130,7 @@ test('session meteor method call with waitSpan', function() {
   expect(transaction.end.mock.calls.length).toBe(1);
 });
 
-test('ignore meteor method call if transaction does not exist', function() {
+test('ignore meteor method call if transaction does not exist', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -149,7 +149,7 @@ test('ignore meteor method call if transaction does not exist', function() {
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });
 
-test('session sub call', function() {
+test('session sub call', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -174,7 +174,7 @@ test('session sub call', function() {
   expect(agent.startSpan.mock.calls[0][0]).toBe('execution');
 });
 
-test('session sub call with waitSpan', function() {
+test('session sub call with waitSpan', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -204,7 +204,7 @@ test('session sub call with waitSpan', function() {
   expect(waitSpan.end.mock.calls.length).toBe(1);
 });
 
-test('session sub call if transaction does not exist', function() {
+test('session sub call if transaction does not exist', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -223,7 +223,7 @@ test('session sub call if transaction does not exist', function() {
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });
 
-test('session unsub call', function() {
+test('session unsub call', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -250,7 +250,7 @@ test('session unsub call', function() {
   expect(msg.__transaction.end.mock.calls.length).toBe(1);
 });
 
-test('session unsub call with waitSpan', function() {
+test('session unsub call with waitSpan', () => {
   const Session = newSession();
 
   const agent = newAgent();
@@ -281,7 +281,7 @@ test('session unsub call with waitSpan', function() {
   expect(msg.__transaction.end.mock.calls.length).toBe(1);
 });
 
-test('ignore session unsub call if transaction does not exist', function() {
+test('ignore session unsub call if transaction does not exist', () => {
   const Session = newSession();
 
   const agent = newAgent();
