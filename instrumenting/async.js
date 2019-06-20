@@ -6,10 +6,8 @@ function start(agent, Fibers) {
     return function(...args) {
       const transaction = agent.currentTransaction;
       if (transaction) {
-        const span = agent.startSpan();
+        const span = agent.startSpan(ASYNC, ASYNC);
         if (span) {
-          span.name = ASYNC.NAME;
-          span.type = ASYNC.TYPE;
           Fibers.current._apmSpan = span;
         }
       }
@@ -18,7 +16,7 @@ function start(agent, Fibers) {
     };
   });
 
-  shimmer.wrap(Fibers, 'run', function(original) {
+  shimmer.wrap(Fibers.prototype, 'run', function(original) {
     return function(...args) {
       if (this._apmSpan) {
         this._apmSpan.end();

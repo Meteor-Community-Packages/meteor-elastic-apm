@@ -45,21 +45,31 @@ function start(agent, Meteor, MongoCursor) {
 
         const transaction = agent.currentTransaction;
         if (transaction) {
-          const span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, 'db');
-          transaction.__span = span;
+          if (transaction.__span) {
+            transaction.__span.end();
+          }
+          transaction.__span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, 'db');
+        }
+
+        function closeSpan(ex) {
+          if (transaction) {
+            if (transaction.__span) {
+              transaction.__span.end();
+              transaction.__span = undefined;
+            }
+          }
+          if (ex) {
+            agent.captureError(ex);
+          }
         }
 
         try {
           const result = original.apply(this, args);
 
-          if (transaction && transaction.__span) {
-            transaction.__span.end();
-          }
+          closeSpan();
           return result;
         } catch (ex) {
-          if (transaction && transaction.__span) {
-            transaction.__span.end();
-          }
+          closeSpan(ex);
           throw ex;
         }
       };
