@@ -2,7 +2,7 @@ const newFibers = require('./mocks/fibers');
 const instrumentAsync = require('./../instrumenting/async');
 const newAgent = require('./mocks/agent');
 
-test('track async execution', function() {
+test('track async execution', () => {
   const Fibers = newFibers();
   const agent = newAgent();
 
@@ -19,7 +19,7 @@ test('track async execution', function() {
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });
 
-test('do not create span if transaction is empty', function() {
+test('do not create span if transaction is empty', () => {
   const Fibers = newFibers();
   const agent = newAgent();
 

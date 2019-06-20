@@ -2,7 +2,7 @@ const instrumentErrors = require('./../instrumenting/errors');
 const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 
-test('catch meteor method exception', function() {
+test('catch meteor method exception', () => {
   const Meteor = newMeteor();
 
   Meteor.methods({

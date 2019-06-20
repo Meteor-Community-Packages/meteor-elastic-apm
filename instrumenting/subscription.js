@@ -36,27 +36,30 @@ function start(agent, Subscription) {
           }
           agent.captureError(err);
           transaction.end();
+          this.__transaction = null;
         }
 
         return original.call(this, err);
       };
     });
 
-    // tracking the pub/sub operations
-    ['added', 'changed', 'removed'].forEach(function(funcName) {
-      shimmer.wrap(subscriptionProto, funcName, function(original) {
-        return function(collectionName, id, fields) {
-          const transaction = agent.startTransaction(
-            `${collectionName}:${funcName}`,
-            'sub - operations'
-          );
-          const res = original.call(this, collectionName, id, fields);
+    // This is commented because this is not related to transactions and span.
+    // It should be a metrics type, elastic agent do not expose it's metrics feature.
+    // // tracking the pub/sub operations
+    // ['added', 'changed', 'removed'].forEach(function(funcName) {
+    //   shimmer.wrap(subscriptionProto, funcName, function(original) {
+    //     return function(collectionName, id, fields) {
+    //       const transaction = agent.startTransaction(
+    //         `${collectionName}:${funcName}`,
+    //         'sub - operations'
+    //       );
+    //       const res = original.call(this, collectionName, id, fields);
 
-          transaction.end(JSON.stringify(fields));
-          return res;
-        };
-      });
-    });
+    //       transaction.end(JSON.stringify(fields));
+    //       return res;
+    //     };
+    //   });
+    // });
   }
 
   wrapSubscription(Subscription.prototype);
