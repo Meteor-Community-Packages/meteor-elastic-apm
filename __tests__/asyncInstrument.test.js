@@ -13,7 +13,8 @@ test('track async execution', () => {
   Fibers.yield();
   expect(Fibers.current._apmSpan).toBeDefined();
 
-  Fibers.run.call(Fibers.current);
+  Fibers.current.run();
+
   expect(Fibers.current._apmSpan).toBeNull();
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
@@ -26,7 +27,7 @@ test('do not create span if transaction is empty', () => {
   instrumentAsync(agent, Fibers);
 
   Fibers.yield();
-  Fibers.run();
+  Fibers.current.run();
 
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });

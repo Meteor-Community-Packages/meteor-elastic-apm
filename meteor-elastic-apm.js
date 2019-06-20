@@ -12,6 +12,8 @@ const instrumentSubscription = require('./instrumenting/subscription');
 const instrumentAsync = require('./instrumenting/async');
 const instrumentDB = require('./instrumenting/db');
 
+const hackDB = require('./hacks');
+
 shimmer.wrap(Agent, 'start', function(startAgent) {
   return function(...args) {
     const config = args[0] || {};
@@ -25,14 +27,16 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
           version
         });
 
-        instrumentErrors(Agent, Meteor);
-        instrumentHttp(Agent, WebApp);
-        instrumentSession(Agent, Session);
-        instrumentSubscription(Agent, Subscription);
-        instrumentAsync(Agent, Fibers);
-        instrumentDB(Agent, Meteor, MongoCursor);
-
         try {
+          hackDB();
+
+          instrumentErrors(Agent, Meteor);
+          instrumentHttp(Agent, WebApp);
+          instrumentSession(Agent, Session);
+          instrumentSubscription(Agent, Subscription);
+          instrumentAsync(Agent, Fibers);
+          instrumentDB(Agent, Meteor, MongoCursor);
+
           startAgent.apply(Agent, args);
 
           Agent.logger.info('meteor-elastic-apm completed instrumenting');
