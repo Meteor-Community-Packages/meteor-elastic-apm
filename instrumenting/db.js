@@ -1,4 +1,5 @@
 import shimmer from 'shimmer';
+import { DB } from '../constants';
 
 function start(agent, Meteor, MongoCursor) {
   const mongoConnectionProto = Meteor.Collection.prototype;
@@ -11,7 +12,7 @@ function start(agent, Meteor, MongoCursor) {
 
         const collName = this._name;
         if (transaction) {
-          const dbExecSpan = agent.startSpan(`${collName}.${func}`, 'db');
+          const dbExecSpan = agent.startSpan(`${collName}.${func}`, DB);
           transaction.__span = dbExecSpan;
         }
 
@@ -48,7 +49,7 @@ function start(agent, Meteor, MongoCursor) {
           if (transaction.__span) {
             transaction.__span.end();
           }
-          transaction.__span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, 'db');
+          transaction.__span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, DB);
         }
 
         function closeSpan(ex) {
