@@ -13,13 +13,21 @@ function start(agent, Meteor, MongoCursor) {
 
         function closeSpan(exception, result) {
           if (exception) {
-            dbExecSpan.addLabels({
-              status: 'fail',
-              exception
-            });
+            if (dbExecSpan) {
+              dbExecSpan.addLabels({
+                status: 'fail',
+                exception
+              });
+            }
 
             agent.captureError(exception);
-          } else if (func === 'insert') {
+          }
+
+          if (!dbExecSpan) {
+            return;
+          }
+
+          if (func === 'insert') {
             const [document] = args;
 
             dbExecSpan.addLabels({
@@ -66,9 +74,11 @@ function start(agent, Meteor, MongoCursor) {
             const newArgs = args.slice(0, args.length - 2);
             const callback = args[args.length - 1];
 
-            dbExecSpan.addLabels({
-              async: true
-            });
+            if (dbExecSpan) {
+              dbExecSpan.addLabels({
+                async: true
+              });
+            }
 
             const newCallback = (exception, result) => {
               closeSpan(exception, result);
@@ -107,10 +117,34 @@ function start(agent, Meteor, MongoCursor) {
           transaction.__span = agent.startSpan(`${cursorDescription.collectionName}:${type}`, DB);
         }
 
-        function closeSpan(ex) {
+        function closeSpan(ex, result) {
           if (transaction) {
-            if (transaction.__span) {
-              transaction.__span.end();
+            const cursorSpan = transaction.__span;
+
+            if (cursorSpan) {
+              if (type == 'fetch' || type == 'map') {
+                const docsFetched = result.length;
+
+                cursorSpan.addLabels({
+                  docsFetched
+                });
+              }
+
+              cursorSpan.addLabels({
+                selector: JSON.stringify(cursorDescription.selector)
+              });
+
+              if (cursorDescription.options) {
+                const { fields, sort, limit } = cursorDescription.options;
+
+                cursorSpan.addLabels({
+                  fields: JSON.stringify(fields || {}),
+                  sort: JSON.stringify(sort || {}),
+                  limit
+                });
+              }
+
+              cursorSpan.end();
               transaction.__span = undefined;
             }
           }
@@ -122,7 +156,7 @@ function start(agent, Meteor, MongoCursor) {
         try {
           const result = original.apply(this, args);
 
-          closeSpan();
+          closeSpan(null, result);
           return result;
         } catch (ex) {
           closeSpan(ex);

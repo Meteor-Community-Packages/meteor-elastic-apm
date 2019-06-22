@@ -1,4 +1,4 @@
-const instrumentErrors = require('./../instrumenting/errors');
+const instrumentMethods = require('./../instrumenting/methods');
 const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 
@@ -16,7 +16,7 @@ test('catch meteor method exception', () => {
     name: 'test'
   };
 
-  instrumentErrors(agent, Meteor);
+  instrumentMethods(agent, Meteor);
 
   Meteor.methods({
     method2() {
@@ -54,7 +54,7 @@ test('transform string exception into Error object', () => {
     name: 'test'
   };
 
-  instrumentErrors(agent, Meteor);
+  instrumentMethods(agent, Meteor);
 
   expect(() => {
     Meteor.default_server.method_handlers.textError();

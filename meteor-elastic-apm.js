@@ -5,7 +5,7 @@ const Agent = require('elastic-apm-node');
 
 const { Session, Subscription, MongoCursor } = require('./meteorx');
 
-const instrumentErrors = require('./instrumenting/errors');
+const instrumentMethods = require('./instrumenting/methods');
 const instrumentHttp = require('./instrumenting/http');
 const instrumentSession = require('./instrumenting/session');
 const instrumentSubscription = require('./instrumenting/subscription');
@@ -14,23 +14,24 @@ const instrumentDB = require('./instrumenting/db');
 
 const hackDB = require('./hacks');
 
+const [framework, version] = Meteor.release.split('@');
+
+Agent.setFramework({
+  name: framework,
+  version,
+  override: true
+});
+
 shimmer.wrap(Agent, 'start', function(startAgent) {
   return function(...args) {
     const config = args[0] || {};
 
     if (config.active !== false) {
       Meteor.startup(() => {
-        const [framework, version] = Meteor.release.split('@');
-
-        Agent.setFramework({
-          name: framework,
-          version
-        });
-
         try {
           hackDB();
 
-          instrumentErrors(Agent, Meteor);
+          instrumentMethods(Agent, Meteor);
           instrumentHttp(Agent, WebApp);
           instrumentSession(Agent, Session);
           instrumentSubscription(Agent, Subscription);
