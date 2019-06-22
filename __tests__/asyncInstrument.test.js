@@ -11,11 +11,11 @@ test('track async execution', () => {
   };
   instrumentAsync(agent, Fibers);
   Fibers.yield();
-  expect(Fibers.current._apmSpan).toBeDefined();
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeDefined();
 
   Fibers.current.run();
 
-  expect(Fibers.current._apmSpan).toBeNull();
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeNull();
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });

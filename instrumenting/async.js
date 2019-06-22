@@ -1,6 +1,8 @@
 import shimmer from 'shimmer';
 import { ASYNC } from '../constants';
 
+const EventSymbol = Symbol();
+
 function start(agent, Fibers) {
   shimmer.wrap(Fibers, 'yield', function(original) {
     return function(...args) {
@@ -8,7 +10,7 @@ function start(agent, Fibers) {
       if (transaction) {
         const span = agent.startSpan(ASYNC, ASYNC);
         if (span) {
-          Fibers.current._apmSpan = span;
+          Fibers.current[EventSymbol] = span;
         }
       }
 
@@ -18,9 +20,9 @@ function start(agent, Fibers) {
 
   shimmer.wrap(Fibers.prototype, 'run', function(original) {
     return function(...args) {
-      if (this._apmSpan) {
-        this._apmSpan.end();
-        this._apmSpan = null;
+      if (this[EventSymbol]) {
+        this[EventSymbol].end();
+        this[EventSymbol] = null;
       }
       return original.apply(this, args);
     };
@@ -28,3 +30,4 @@ function start(agent, Fibers) {
 }
 
 module.exports = start;
+module.exports.EventSymbol = EventSymbol;
