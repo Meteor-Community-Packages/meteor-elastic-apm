@@ -20,15 +20,3 @@ test('track async execution', () => {
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });
-
-test('do not create span if transaction is empty', () => {
-  const Fibers = newFibers();
-  const agent = newAgent();
-
-  instrumentAsync(agent, Fibers);
-
-  Fibers.yield();
-  Fibers.current.run();
-
-  expect(agent.startSpan.mock.calls.length).toBe(0);
-});

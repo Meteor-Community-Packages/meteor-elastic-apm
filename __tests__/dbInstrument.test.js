@@ -22,35 +22,6 @@ test('track meteor collection methods', () => {
   expect(agent.startSpan.mock.calls[0][1]).toBe('DB');
 });
 
-test('ignore tracking meteor collection methods if no transaction', () => {
-  const agent = newAgent();
-  const Meteor = newMeteor();
-  const MongoCursor = newMongoCursor();
-
-  instrumentDB(agent, Meteor, MongoCursor);
-
-  const testCollection = new Meteor.Collection();
-  testCollection._name = 'testCollection';
-
-  testCollection.find({ _id: 1 });
-
-  expect(agent.startSpan.mock.calls.length).toBe(0);
-});
-
-test('ignore track mongo cursor methods if no transaction', () => {
-  const agent = newAgent();
-  const Meteor = newMeteor();
-  const MongoCursor = newMongoCursor();
-
-  instrumentDB(agent, Meteor, MongoCursor);
-
-  const cursor = new MongoCursor();
-
-  cursor.count();
-
-  expect(agent.startSpan.mock.calls.length).toBe(0);
-});
-
 test('track mongo cursor methods', () => {
   const agent = newAgent();
   const Meteor = newMeteor();

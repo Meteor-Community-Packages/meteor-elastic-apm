@@ -9,7 +9,8 @@ function newAgent() {
 
   agent.captureError = jest.fn();
   agent.startSpan = jest.fn(() => ({
-    end: jest.fn()
+    end: jest.fn(),
+    addTags: jest.fn()
   }));
   agent.startTransaction = jest.fn(() => ({
     end: jest.fn()

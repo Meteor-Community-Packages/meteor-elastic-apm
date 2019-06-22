@@ -2,34 +2,89 @@ import shimmer from 'shimmer';
 import { DB } from '../constants';
 
 function start(agent, Meteor, MongoCursor) {
-  const mongoConnectionProto = Meteor.Collection.prototype;
-  // findOne is handled by find - so no need to track it
-  // upsert is handled by update
-  ['find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(func) {
-    shimmer.wrap(mongoConnectionProto, func, function(original) {
+  const meteorCollectionProto = Meteor.Collection.prototype;
+  ['findOne', 'find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(
+    func
+  ) {
+    shimmer.wrap(meteorCollectionProto, func, function(original) {
       return function(...args) {
-        const transaction = agent.currentTransaction;
-
         const collName = this._name;
-        if (transaction) {
-          const dbExecSpan = agent.startSpan(`${collName}.${func}`, DB);
-          transaction.__span = dbExecSpan;
+        const dbExecSpan = agent.startSpan(`${collName}.${func}`, DB);
+
+        function closeSpan(exception, result) {
+          if (exception) {
+            dbExecSpan.addLabels({
+              status: 'fail',
+              exception
+            });
+
+            agent.captureError(exception);
+          } else if (func === 'insert') {
+            const [document] = args;
+
+            dbExecSpan.addLabels({
+              document: JSON.stringify(document),
+              docInserted: result
+            });
+          } else if (func === 'find' || func === 'findOne') {
+            const [selector = {}, options = {}] = args;
+
+            let docsFetched = Array.isArray(result) ? result.length : 0;
+
+            if (func === 'findOne') {
+              docsFetched = result ? 1 : 0;
+            }
+
+            dbExecSpan.addLabels({
+              selector: JSON.stringify(selector),
+              options: JSON.stringify(options),
+              docsFetched
+            });
+          } else if (func === 'update') {
+            const [selector = {}, modifier = {}, options = {}] = args;
+
+            dbExecSpan.addLabels({
+              selector: JSON.stringify(selector),
+              options: JSON.stringify(options),
+              modifier: JSON.stringify(modifier),
+              docsUpdated: result
+            });
+          } else if (func === 'remove') {
+            const [selector = {}] = args;
+
+            dbExecSpan.addLabels({
+              selector: JSON.stringify(selector),
+              docsRemoved: result
+            });
+          }
+
+          dbExecSpan.end();
         }
 
         try {
+          if (typeof args[args.length - 1] === 'function') {
+            const newArgs = args.slice(0, args.length - 2);
+            const callback = args[args.length - 1];
+
+            dbExecSpan.addLabels({
+              async: true
+            });
+
+            const newCallback = (exception, result) => {
+              closeSpan(exception, result);
+
+              callback(exception, result);
+            };
+
+            return original.apply(this, [...newArgs, newCallback]);
+          }
           const ret = original.apply(this, args);
 
-          if (transaction && transaction.__span) {
-            transaction.__span.end();
-            transaction.__span = null;
-          }
-
+          closeSpan(null, ret);
           return ret;
         } catch (ex) {
-          if (transaction && transaction.__span) {
-            transaction.__span.end();
-            transaction.__span = null;
-          }
+          closeSpan(ex);
+
           throw ex;
         }
       };

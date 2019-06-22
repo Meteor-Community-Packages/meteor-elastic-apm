@@ -10,7 +10,7 @@ function start(agent, Fibers) {
 
       const validParents = parentSpan.type !== ASYNC && parentSpan.type !== DB;
 
-      if (agent.currentTransaction && validParents) {
+      if (validParents) {
         Fibers.current[EventSymbol] = agent.startSpan(ASYNC, ASYNC);
       }
 
