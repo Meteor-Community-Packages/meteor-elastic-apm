@@ -7,17 +7,19 @@ function start(agent, Session) {
         if (msg.msg === 'method' || msg.msg === 'sub') {
           const name = msg.msg === 'method' ? msg.method : msg.name;
           const type = msg.msg;
-          agent.startTransaction(name, type);
+          const transaction = agent.startTransaction(name, type);
 
           agent.setCustomContext(msg.params || {});
           agent.setUserContext({ id: this.userId || 'Not authorized' });
 
-          if (agent.currentTransaction) {
-            agent.currentTransaction.addLabels({
+          if (transaction) {
+            transaction.addLabels({
               params: JSON.stringify(msg.params)
             });
 
-            agent.currentTransaction.__span = agent.startSpan('wait');
+            transaction.__span = agent.startSpan('wait');
+
+            msg.__transaction = transaction;
           }
         }
 
@@ -27,35 +29,33 @@ function start(agent, Session) {
 
     shimmer.wrap(sessionProto.protocol_handlers, 'method', function(original) {
       return function(msg, unblock) {
-        if (agent.currentTransaction) {
-          if (agent.currentTransaction.__span) {
-            agent.currentTransaction.__span.end();
+        if (msg.__transaction) {
+          if (msg.__transaction.__span) {
+            msg.__transaction.__span.end();
+            msg.__transaction.__span = undefined;
           }
 
-          agent.currentTransaction.__span = agent.startSpan('execution');
+          msg.__transaction.__span = agent.startSpan('execution');
         }
 
-        const response = original.call(this, msg, unblock);
-
-        return response;
+        return original.call(this, msg, unblock);
       };
     });
 
     shimmer.wrap(sessionProto.protocol_handlers, 'sub', function(original) {
       return function(msg, unblock) {
         const self = this;
-
         if (msg.__transaction) {
           if (msg.__transaction.__span) {
             msg.__transaction.__span.end();
           }
-        }
 
-        if (msg.__transaction) {
           msg.__transaction.__span = agent.startSpan('execution');
         }
 
-        return original.call(self, msg, unblock);
+        const result = original.call(self, msg, unblock);
+
+        return result;
       };
     });
 
