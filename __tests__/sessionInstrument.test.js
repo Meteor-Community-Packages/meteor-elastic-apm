@@ -94,8 +94,6 @@ test('session meteor method call', () => {
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
   expect(agent.startSpan.mock.calls[0][0]).toBe('execution');
-
-  expect(transaction.end.mock.calls.length).toBe(1);
 });
 
 test('session meteor method call with waitSpan', () => {
@@ -127,7 +125,6 @@ test('session meteor method call with waitSpan', () => {
   expect(agent.startSpan.mock.calls[1][0]).toBe('execution');
 
   expect(waitSpan.end.mock.calls.length).toBe(1);
-  expect(transaction.end.mock.calls.length).toBe(1);
 });
 
 test('ignore meteor method call if transaction does not exist', () => {
@@ -146,7 +143,7 @@ test('ignore meteor method call if transaction does not exist', () => {
 
   clientSession.protocol_handlers.method(msg);
 
-  expect(agent.startSpan.mock.calls.length).toBe(1);
+  expect(agent.startSpan.mock.calls.length).toBe(0);
 });
 
 test('session sub call', () => {

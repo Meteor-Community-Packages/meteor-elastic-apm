@@ -46,7 +46,7 @@ test('close transaction when sub is ready', () => {
 
   sub.ready();
 
-  expect(sub.__transaction).toBeNull();
+  expect(sub.__transaction).toBeUndefined();
   expect(transaction.end.mock.calls.length).toBe(1);
 });
 
@@ -67,7 +67,7 @@ test('close transaction and its span when sub is ready', () => {
 
   sub.ready();
 
-  expect(sub.__transaction).toBeNull();
+  expect(sub.__transaction).toBeUndefined();
   expect(transaction.end.mock.calls.length).toBe(1);
   expect(waitSpan.end.mock.calls.length).toBe(1);
 });
@@ -101,7 +101,7 @@ test('close transaction and capture error if sub throws error', () => {
 
   sub.error(new Error('test error'));
 
-  expect(sub.__transaction).toBeNull();
+  expect(sub.__transaction).toBeUndefined();
   expect(transaction.end.mock.calls.length).toBe(1);
   expect(agent.captureError.mock.calls.length).toBe(1);
 });
@@ -123,7 +123,7 @@ test('close transaction/span and capture error if sub throws error', () => {
 
   sub.error(new Error('test error'));
 
-  expect(sub.__transaction).toBeNull();
+  expect(sub.__transaction).toBeUndefined();
   expect(transaction.end.mock.calls.length).toBe(1);
   expect(waitSpan.end.mock.calls.length).toBe(1);
   expect(agent.captureError.mock.calls.length).toBe(1);

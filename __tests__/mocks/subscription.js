@@ -8,6 +8,9 @@ function newSubscription() {
   Subscription.prototype.added = jest.fn();
   Subscription.prototype.changed = jest.fn();
   Subscription.prototype.removed = jest.fn();
+  Subscription.prototype._documents = {
+    testCollection: {}
+  };
 
   return Subscription;
 }

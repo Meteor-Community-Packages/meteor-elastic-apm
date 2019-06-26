@@ -45,7 +45,7 @@ function start(agent, Subscription) {
           agent.captureError(err);
           transaction.addLabels({
             exception: JSON.stringify({
-              message: error.message,
+              message: err.message,
               stack: err.stack
             })
           });
