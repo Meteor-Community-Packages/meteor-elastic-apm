@@ -122,7 +122,7 @@ function start(agent, Meteor, MongoCursor) {
             const cursorSpan = transaction.__span;
 
             if (cursorSpan) {
-              if (type == 'fetch' || type == 'map') {
+              if (type === 'fetch' || type === 'map') {
                 const docsFetched = result.length;
 
                 cursorSpan.addLabels({
