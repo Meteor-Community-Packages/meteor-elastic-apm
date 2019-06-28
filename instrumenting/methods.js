@@ -39,13 +39,11 @@ function start(agent, Meteor) {
 
           return result;
         } catch (ex) {
-          if (ex) {
-            if (typeof ex !== 'object') {
-              // eslint-disable-next-line no-ex-assign
-              ex = { message: ex, stack: ex };
-            }
-            ex.stack = { stack: ex.stack, source: 'method' };
+          if (typeof ex !== 'object') {
+            // eslint-disable-next-line no-ex-assign
+            ex = { message: ex, stack: ex };
           }
+          ex.stack = { stack: ex.stack, source: 'method' };
 
           closeTransaction(agent, ex, null);
           throw ex;

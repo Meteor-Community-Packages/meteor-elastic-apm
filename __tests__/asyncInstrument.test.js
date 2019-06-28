@@ -20,3 +20,26 @@ test('track async execution', () => {
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });
+
+test('ignore invalid parents', () => {
+  const Fibers = newFibers();
+  const agent = newAgent();
+
+  agent.currentTransaction = {
+    name: 'test'
+  };
+  agent.currentSpan = {
+    type: 'db'
+  };
+
+  instrumentAsync(agent, Fibers);
+  Fibers.yield();
+
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeUndefined();
+
+  Fibers.current.run();
+
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeUndefined();
+
+  expect(agent.startSpan.mock.calls.length).toBe(0);
+});
