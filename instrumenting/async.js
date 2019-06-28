@@ -1,15 +1,17 @@
 import shimmer from 'shimmer';
-import { ASYNC } from '../constants';
+import { ASYNC, DB } from '../constants';
+
+const EventSymbol = Symbol('ASYNC');
 
 function start(agent, Fibers) {
   shimmer.wrap(Fibers, 'yield', function(original) {
     return function(...args) {
-      const transaction = agent.currentTransaction;
-      if (transaction) {
-        const span = agent.startSpan(ASYNC, ASYNC);
-        if (span) {
-          Fibers.current._apmSpan = span;
-        }
+      const parentSpan = agent.currentSpan || {};
+
+      const validParents = parentSpan.type !== ASYNC && parentSpan.type !== DB;
+
+      if (validParents) {
+        Fibers.current[EventSymbol] = agent.startSpan(ASYNC, ASYNC);
       }
 
       return original.apply(this, args);
@@ -18,9 +20,9 @@ function start(agent, Fibers) {
 
   shimmer.wrap(Fibers.prototype, 'run', function(original) {
     return function(...args) {
-      if (this._apmSpan) {
-        this._apmSpan.end();
-        this._apmSpan = null;
+      if (this[EventSymbol]) {
+        this[EventSymbol].end();
+        this[EventSymbol] = undefined;
       }
       return original.apply(this, args);
     };
@@ -28,3 +30,4 @@ function start(agent, Fibers) {
 }
 
 module.exports = start;
+module.exports.EventSymbol = EventSymbol;

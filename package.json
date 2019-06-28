@@ -5,7 +5,8 @@
   "main": "meteor-elastic-apm.js",
   "scripts": {
     "lint": "eslint ./",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "report-coverage": "codecov"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
     "@babel/core": "^7.4.5",
     "babel-jest": "^24.8.0",
     "babel-preset-env": "^1.7.0",
+    "codecov": "^3.5.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",

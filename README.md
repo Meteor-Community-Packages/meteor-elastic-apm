@@ -1,5 +1,8 @@
 # meteor-elastic-apm
 
+[![Build Status](https://travis-ci.org/kschingiz/meteor-elastic-apm.svg?branch=master)](https://travis-ci.org/kschingiz/meteor-elastic-apm)
+[![codecov](https://codecov.io/gh/kschingiz/meteor-elastic-apm/branch/master/graph/badge.svg)](https://codecov.io/gh/kschingiz/meteor-elastic-apm)
+
 Performance Monitoring for Meteor based on Elastic APM
 
 [![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/meteor-transaction.png)](https://github.com/kschingiz/meteor-elastic-apm)
@@ -40,10 +43,10 @@ meteor add http mongo-livequery
 Then somewhere in your server code, Elastic documentation stays that Agent.start should be executed before anything else, and should be at the very top of your code
 
 ```js
-import Agent from "meteor/kschingiz:meteor-elastic-apm";
+import Agent from 'meteor/kschingiz:meteor-elastic-apm';
 
 const options = {
-  serviceName: "meteor-demo-app"
+  serviceName: 'meteor-demo-app'
 };
 Agent.start(options);
 ```

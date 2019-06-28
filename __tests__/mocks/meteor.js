@@ -1,13 +1,14 @@
-function Collection() {}
-
-Collection.prototype.find = jest.fn();
-Collection.prototype.update = jest.fn();
-Collection.prototype.remove = jest.fn();
-Collection.prototype.insert = jest.fn();
-Collection.prototype._ensureIndex = jest.fn();
-Collection.prototype._dropIndex = jest.fn();
-
 function newMeteor() {
+  function Collection() {}
+
+  Collection.prototype.findOne = jest.fn();
+  Collection.prototype.find = jest.fn();
+  Collection.prototype.update = jest.fn();
+  Collection.prototype.remove = jest.fn();
+  Collection.prototype.insert = jest.fn();
+  Collection.prototype._ensureIndex = jest.fn();
+  Collection.prototype._dropIndex = jest.fn();
+
   return {
     call: jest.fn(),
     subscribe: jest.fn(),

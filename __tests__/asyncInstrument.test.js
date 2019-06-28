@@ -11,23 +11,35 @@ test('track async execution', () => {
   };
   instrumentAsync(agent, Fibers);
   Fibers.yield();
-  expect(Fibers.current._apmSpan).toBeDefined();
+
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeDefined();
 
   Fibers.current.run();
 
-  expect(Fibers.current._apmSpan).toBeNull();
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeUndefined();
 
   expect(agent.startSpan.mock.calls.length).toBe(1);
 });
 
-test('do not create span if transaction is empty', () => {
+test('ignore invalid parents', () => {
   const Fibers = newFibers();
   const agent = newAgent();
 
-  instrumentAsync(agent, Fibers);
+  agent.currentTransaction = {
+    name: 'test'
+  };
+  agent.currentSpan = {
+    type: 'db'
+  };
 
+  instrumentAsync(agent, Fibers);
   Fibers.yield();
+
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeUndefined();
+
   Fibers.current.run();
+
+  expect(Fibers.current[instrumentAsync.EventSymbol]).toBeUndefined();
 
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });

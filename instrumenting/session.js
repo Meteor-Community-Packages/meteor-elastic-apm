@@ -12,9 +12,15 @@ function start(agent, Session) {
           agent.setCustomContext(msg.params || {});
           agent.setUserContext({ id: this.userId || 'Not authorized' });
 
-          const waitTimeSpan = agent.startSpan('wait');
-          transaction.__span = waitTimeSpan;
-          msg.__transaction = transaction;
+          if (transaction) {
+            transaction.addLabels({
+              params: JSON.stringify(msg.params)
+            });
+
+            transaction.__span = agent.startSpan('wait');
+
+            msg.__transaction = transaction;
+          }
         }
 
         return original.call(this, msg);
@@ -26,37 +32,30 @@ function start(agent, Session) {
         if (msg.__transaction) {
           if (msg.__transaction.__span) {
             msg.__transaction.__span.end();
-            msg.__transaction.__span = null;
+            msg.__transaction.__span = undefined;
           }
+
+          msg.__transaction.__span = agent.startSpan('execution');
         }
 
-        const execSpan = agent.startSpan('execution');
-        const response = original.call(this, msg, unblock);
-
-        execSpan.end();
-
-        if (msg.__transaction) {
-          msg.__transaction.end(JSON.stringify(response));
-        }
-        return response;
+        return original.call(this, msg, unblock);
       };
     });
 
     shimmer.wrap(sessionProto.protocol_handlers, 'sub', function(original) {
       return function(msg, unblock) {
         const self = this;
-
         if (msg.__transaction) {
           if (msg.__transaction.__span) {
             msg.__transaction.__span.end();
           }
-        }
 
-        if (msg.__transaction) {
           msg.__transaction.__span = agent.startSpan('execution');
         }
 
-        return original.call(self, msg, unblock);
+        const result = original.call(self, msg, unblock);
+
+        return result;
       };
     });
 
