@@ -3,32 +3,15 @@
 [![Build Status](https://travis-ci.org/kschingiz/meteor-elastic-apm.svg?branch=master)](https://travis-ci.org/kschingiz/meteor-elastic-apm)
 [![codecov](https://codecov.io/gh/kschingiz/meteor-elastic-apm/branch/master/graph/badge.svg)](https://codecov.io/gh/kschingiz/meteor-elastic-apm)
 
-Performance Monitoring for Meteor based on Elastic APM
+### Performance Monitoring for Meteor based on Elastic APM
 
-[![Meteor Elastic APM screenshot](https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/meteor-transaction.png)](https://github.com/kschingiz/meteor-elastic-apm)
-
-# what it monitors
-
-1. Meteor methods - detailed stack trace of what happened insine methods
-2. Meteor pub/sub - tracks publications response time
-3. Meteor pub/sub - operations, how many documents were added, updated, removed
-4. Async ops inside methods and pubs, for example http requests
-5. All Incoming and outcoming TCP requests, usefull if you have REST API
-6. Exception handling
-
-# more screenshots
-
-https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/
-
-# project status - Production Ready
-
-# getting started
+## Getting started
 
 1. Install and configure elasticsearch - https://www.elastic.co/downloads/elasticsearch
 2. Install and configure Kibana - https://www.elastic.co/downloads/kibana
 3. Install and configure elastic APM server - https://www.elastic.co/downloads/apm
 
-Then
+Then in your Meteor project
 
 ```bash
 meteor add kschingiz:meteor-elastic-apm
@@ -40,7 +23,7 @@ Maybe you will need to also install
 meteor add http mongo-livequery
 ```
 
-Then somewhere in your server code, Elastic documentation stays that Agent.start should be executed before anything else, and should be at the very top of your code
+Then somewhere in your server code, Elastic documentation says that Agent.start should be executed before anything else, and should be at the very top of your code
 
 ```js
 import Agent from 'meteor/kschingiz:meteor-elastic-apm';
@@ -51,9 +34,25 @@ const options = {
 Agent.start(options);
 ```
 
-Complete [list of Agent options](https://www.elastic.co/guide/en/apm/agent/nodejs/current/advanced-setup.html)
+Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodejs/current/advanced-setup.html)
 
-# Kibana APM with Meteor with MUP
+[![Meteor Elastic APM screenshot](https://raw.githubusercontent.com/kschingiz/meteor-elastic-apm/master/assets/meteor-call-2.png)](https://github.com/kschingiz/meteor-elastic-apm)
+
+## What it monitors
+
+1. Meteor methods: method params, result, exceptions, stack trace
+2. Meteor pub/sub: tracks publications response time, params, exceptions, result
+3. Meteor collection methods(find, insert, etc...): params, result, execution time
+4. MongoDB cursor method(fetch, map, etc...): params, result, execution time
+5. Trace async execution
+6. All Incoming and outgoing HTTP requests, useful if you have REST API
+7. Exception handling
+
+## Screenshots
+
+https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/
+
+## Kibana APM with Meteor with MUP
 
 Meteor Up is a production quality Meteor app deployment tool. We expect you already has up and running Meteor app on server deployed with MUP.
 
@@ -99,14 +98,14 @@ Meteor Up is a production quality Meteor app deployment tool. We expect you alre
 }
 ```
 
-# demo app
+## demo app
 
 https://github.com/kschingiz/demo-meteor-elastic-apm
 
-# API
+## API
 
 Agent is based on `elastic/apm-agent-nodejs` and fully supports all of it's features https://github.com/elastic/apm-agent-nodejs
 
-# contributions
+## Contributions
 
 All contributions are welcome, Let's make the better APM together!
