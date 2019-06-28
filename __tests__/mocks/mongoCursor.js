@@ -4,7 +4,7 @@ function newMongoCursor() {
   MongoCursor.prototype._name = 'test collection';
   MongoCursor.prototype.forEach = jest.fn();
   MongoCursor.prototype.map = jest.fn();
-  MongoCursor.prototype.fetch = jest.fn();
+  MongoCursor.prototype.fetch = jest.fn(() => [1, 2, 3, 4]);
   MongoCursor.prototype.count = jest.fn();
   MongoCursor.prototype.observeChanges = jest.fn();
   MongoCursor.prototype.observe = jest.fn();

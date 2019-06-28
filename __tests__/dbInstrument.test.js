@@ -172,3 +172,72 @@ test('close transaction and its span on cursor methods', () => {
   expect(agent.startSpan.mock.calls[1][1]).toBe('db');
   expect(span.end.mock.calls.length).toBe(1);
 });
+
+test('track db cursor fetch and map methods', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  agent.currentTransaction = agent.startTransaction();
+  const span = agent.startSpan();
+  agent.currentTransaction.__span = span;
+
+  const cursor = new MongoCursor();
+
+  cursor._cursorDescription = {
+    collectionName: 'test'
+  };
+
+  cursor.fetch();
+
+  expect(agent.startSpan.mock.calls.length).toBe(2);
+  expect(agent.startSpan.mock.calls[1][0]).toBe('test:fetch');
+  expect(agent.startSpan.mock.calls[1][1]).toBe('db');
+  expect(span.end.mock.calls.length).toBe(1);
+});
+
+test('track db cursor options', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  agent.currentTransaction = agent.startTransaction();
+  const span = agent.startSpan();
+  agent.currentTransaction.__span = span;
+
+  const cursor = new MongoCursor();
+
+  cursor._cursorDescription = {
+    collectionName: 'test',
+    options: {
+      fields: { field1: 1 },
+      sort: { field1: 1 },
+      limit: 1
+    }
+  };
+
+  cursor.fetch();
+
+  expect(agent.startSpan.mock.calls.length).toBe(2);
+  expect(agent.startSpan.mock.calls[1][0]).toBe('test:fetch');
+  expect(agent.startSpan.mock.calls[1][1]).toBe('db');
+  expect(span.end.mock.calls.length).toBe(1);
+});
+
+test('ignore cursor method if transaction is undefined', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  const cursor = new MongoCursor();
+
+  cursor.fetch();
+
+  expect(agent.startSpan.mock.calls.length).toBe(0);
+});
