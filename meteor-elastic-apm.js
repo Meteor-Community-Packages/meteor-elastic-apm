@@ -27,24 +27,24 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
     const config = args[0] || {};
 
     if (config.active !== false) {
-      // Meteor.startup(() => {
-      try {
-        hackDB();
+      Meteor.startup(() => {
+        try {
+          hackDB();
 
-        instrumentMethods(Agent, Meteor);
-        instrumentHttp(Agent, WebApp);
-        instrumentSession(Agent, Session);
-        instrumentSubscription(Agent, Subscription);
-        instrumentAsync(Agent, Fibers);
-        instrumentDB(Agent, Meteor, MongoCursor);
+          instrumentMethods(Agent, Meteor);
+          instrumentHttp(Agent, WebApp);
+          instrumentSession(Agent, Session);
+          instrumentSubscription(Agent, Subscription);
+          instrumentAsync(Agent, Fibers);
+          instrumentDB(Agent, Meteor, MongoCursor);
 
-        startAgent.apply(Agent, args);
+          startAgent.apply(Agent, args);
 
-        Agent.logger.info('meteor-elastic-apm completed instrumenting');
-      } catch (e) {
-        Agent.logger.error('Could not start meteor-elastic-apm');
-      }
-      // });
+          Agent.logger.info('meteor-elastic-apm completed instrumenting');
+        } catch (e) {
+          Agent.logger.error('Could not start meteor-elastic-apm');
+        }
+      });
     } else {
       Agent.logger.warn('meteor-elastic-apm is not active');
     }
