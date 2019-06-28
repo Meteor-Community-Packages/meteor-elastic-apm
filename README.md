@@ -5,6 +5,8 @@
 
 ### Performance Monitoring for Meteor based on Elastic APM
 
+[![Meteor Elastic APM screenshot](https://raw.githubusercontent.com/kschingiz/meteor-elastic-apm/master/assets/meteor-call-2.png)](https://github.com/kschingiz/meteor-elastic-apm)
+
 ## Getting started
 
 1. Install and configure elasticsearch - https://www.elastic.co/downloads/elasticsearch
@@ -35,8 +37,6 @@ Agent.start(options);
 ```
 
 Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodejs/current/advanced-setup.html)
-
-[![Meteor Elastic APM screenshot](https://raw.githubusercontent.com/kschingiz/meteor-elastic-apm/master/assets/meteor-call-2.png)](https://github.com/kschingiz/meteor-elastic-apm)
 
 ## What it monitors
 
