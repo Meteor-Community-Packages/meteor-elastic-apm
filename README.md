@@ -48,6 +48,11 @@ Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodej
 6. All Incoming and outgoing HTTP requests, useful if you have REST API
 7. Exception handling
 
+## Metrics
+
+From version 2.2.0 the package collects and sends meteor specific metrics to the apm-server.
+You can learn how it works and how to use it in [Metrics docs](./METRICS.md)
+
 ## Screenshots
 
 https://github.com/kschingiz/meteor-elastic-apm/blob/master/assets/
