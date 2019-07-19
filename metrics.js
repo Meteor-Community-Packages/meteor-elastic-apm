@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable import/no-unresolved */
 import meteorMeasured from 'meteor/kschingiz:meteor-measured';
 
 function startMetrics(agent) {
