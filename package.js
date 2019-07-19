@@ -18,6 +18,10 @@ Npm.depends({
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.7');
+
+  api.use('kschingiz:meteor-measured');
+  api.imply('kschingiz:meteor-measured');
+
   api.use([
     'ecmascript',
     'mongo',

@@ -11,6 +11,7 @@ const instrumentSession = require('./instrumenting/session');
 const instrumentSubscription = require('./instrumenting/subscription');
 const instrumentAsync = require('./instrumenting/async');
 const instrumentDB = require('./instrumenting/db');
+const startMetrics = require('./metrics');
 
 const hackDB = require('./hacks');
 
@@ -40,9 +41,12 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
 
           startAgent.apply(Agent, args);
 
+          startMetrics(Agent);
+
           Agent.logger.info('meteor-elastic-apm completed instrumenting');
         } catch (e) {
           Agent.logger.error('Could not start meteor-elastic-apm');
+          throw e;
         }
       });
     } else {
