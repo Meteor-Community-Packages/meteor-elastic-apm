@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 Package.describe({
   name: 'kschingiz:meteor-elastic-apm',
-  version: '2.1.1',
+  version: '2.2.0',
   // Brief, one-line summary of the package.
   summary: 'Performance monitoring for Meteor based on Elastic APM',
   // URL to the Git repository containing the source code for this package.
@@ -18,6 +18,10 @@ Npm.depends({
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.7');
+
+  api.use('kschingiz:meteor-measured');
+  api.imply('kschingiz:meteor-measured');
+
   api.use([
     'ecmascript',
     'mongo',
