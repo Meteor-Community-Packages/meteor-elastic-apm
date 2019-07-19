@@ -19,7 +19,7 @@ Npm.depends({
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@1.7');
 
-  api.use('kschingiz:meteor-measured');
+  api.use('kschingiz:meteor-measured@1.0.3');
   api.imply('kschingiz:meteor-measured');
 
   api.use([
@@ -45,3 +45,4 @@ Package.onTest(function(api) {
   api.use('kschingiz:meteor-elastic-apm');
   api.mainModule('meteor-elastic-apm-tests.js');
 });
+
