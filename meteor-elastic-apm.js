@@ -29,28 +29,35 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
     const config = args[0] || {};
 
     if (config.active !== false) {
-      Meteor.startup(() => {
-        try {
-          hackDB();
+      try {
+        // Must be called before any other route is registered on WebApp.
+        instrumentHttpIn(Agent, WebApp);
 
-          instrumentMethods(Agent, Meteor);
-          instrumentHttpOut(Agent, WebApp);
-          instrumentHttpIn(Agent, WebApp);
-          instrumentSession(Agent, Session);
-          instrumentSubscription(Agent, Subscription);
-          instrumentAsync(Agent, Fibers);
-          instrumentDB(Agent, Meteor, MongoCursor);
+        Meteor.startup(() => {
+          try {
+            hackDB();
 
-          startAgent.apply(Agent, args);
+            instrumentMethods(Agent, Meteor);
+            instrumentHttpOut(Agent, WebApp);
+            instrumentSession(Agent, Session);
+            instrumentSubscription(Agent, Subscription);
+            instrumentAsync(Agent, Fibers);
+            instrumentDB(Agent, Meteor, MongoCursor);
 
-          startMetrics(Agent);
+            startAgent.apply(Agent, args);
 
-          Agent.logger.info('meteor-elastic-apm completed instrumenting');
-        } catch (e) {
-          Agent.logger.error('Could not start meteor-elastic-apm');
-          throw e;
-        }
-      });
+            startMetrics(Agent);
+
+            Agent.logger.info('meteor-elastic-apm completed instrumenting');
+          } catch (e) {
+            Agent.logger.error('Could not start meteor-elastic-apm');
+            throw e;
+          }
+        });
+      } catch (e) {
+        Agent.logger.error('Could not start meteor-elastic-apm');
+        throw e;
+      }
     } else {
       Agent.logger.warn('meteor-elastic-apm is not active');
     }
