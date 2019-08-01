@@ -6,7 +6,8 @@ const Agent = require('elastic-apm-node');
 const { Session, Subscription, MongoCursor } = require('./meteorx');
 
 const instrumentMethods = require('./instrumenting/methods');
-const instrumentHttp = require('./instrumenting/http');
+const instrumentHttpIn = require('./instrumenting/http-in');
+const instrumentHttpOut = require('./instrumenting/http-out');
 const instrumentSession = require('./instrumenting/session');
 const instrumentSubscription = require('./instrumenting/subscription');
 const instrumentAsync = require('./instrumenting/async');
@@ -33,7 +34,8 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
           hackDB();
 
           instrumentMethods(Agent, Meteor);
-          instrumentHttp(Agent, WebApp);
+          instrumentHttpOut(Agent, WebApp);
+          instrumentHttpIn(Agent, WebApp);
           instrumentSession(Agent, Session);
           instrumentSubscription(Agent, Subscription);
           instrumentAsync(Agent, Fibers);
