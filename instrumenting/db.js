@@ -123,7 +123,7 @@ function start(agent, Meteor, MongoCursor) {
 
             if (cursorSpan) {
               if (type === 'fetch' || type === 'map') {
-                const docsFetched = result.length;
+                const docsFetched = result ? result.length : 0;
 
                 cursorSpan.addLabels({
                   docsFetched

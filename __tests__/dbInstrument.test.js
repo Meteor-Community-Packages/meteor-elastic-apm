@@ -241,3 +241,42 @@ test('ignore cursor method if transaction is undefined', () => {
 
   expect(agent.startSpan.mock.calls.length).toBe(0);
 });
+
+test('catch cursor exceptions', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  MongoCursor.prototype.fetch = () => {
+    throw new Error();
+  };
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  agent.currentTransaction = agent.startTransaction();
+  const span = agent.startSpan();
+  agent.currentTransaction.__span = span;
+
+  const cursor = new MongoCursor();
+
+  cursor._cursorDescription = {
+    collectionName: 'test',
+    options: {
+      fields: { field1: 1 },
+      sort: { field1: 1 },
+      limit: 1
+    }
+  };
+
+  expect(() => {
+    cursor.fetch();
+  }).toThrow();
+
+  expect(agent.startSpan.mock.calls.length).toBe(2);
+  expect(agent.startSpan.mock.calls[1][0]).toBe('test:fetch');
+  expect(agent.startSpan.mock.calls[1][1]).toBe('db');
+  expect(span.end.mock.calls.length).toBe(1);
+  expect(agent.captureError.mock.calls.length).toBe(1);
+
+  MongoCursor.prototype.fetch = jest.fn();
+});
