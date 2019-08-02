@@ -71,7 +71,7 @@ function start(agent, Meteor, MongoCursor) {
 
         try {
           if (typeof args[args.length - 1] === 'function') {
-            const newArgs = args.slice(0, args.length - 2);
+            const newArgs = args.slice(0, args.length - 1);
             const callback = args[args.length - 1];
 
             if (dbExecSpan) {
