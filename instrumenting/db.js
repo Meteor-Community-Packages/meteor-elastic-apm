@@ -119,6 +119,13 @@ function start(agent, Meteor, MongoCursor) {
 
         function closeSpan(ex, result) {
           if (transaction) {
+            if (ex) {
+              transaction.__span.addLabels({
+                status: 'fail',
+                exception: ex
+              });
+            }
+
             const cursorSpan = transaction.__span;
 
             if (cursorSpan) {
