@@ -14,7 +14,7 @@ module.exports = function hack() {
     const self = this;
     const ret = originalOpen.call(self, name);
 
-    Object.keys(ret).forEach(ret, function(fn, m) {
+    Object.keys(ret).forEach(function(m) {
       // make sure, it's in the actual mongo connection object
       // meteorhacks:mongo-collection-utils package add some arbitary methods
       // which does not exist in the mongo connection

@@ -71,7 +71,7 @@ function start(agent, Meteor, MongoCursor) {
 
         try {
           if (typeof args[args.length - 1] === 'function') {
-            const newArgs = args.slice(0, args.length - 2);
+            const newArgs = args.slice(0, args.length - 1);
             const callback = args[args.length - 1];
 
             if (dbExecSpan) {
@@ -119,11 +119,18 @@ function start(agent, Meteor, MongoCursor) {
 
         function closeSpan(ex, result) {
           if (transaction) {
+            if (ex) {
+              transaction.__span.addLabels({
+                status: 'fail',
+                exception: ex
+              });
+            }
+
             const cursorSpan = transaction.__span;
 
             if (cursorSpan) {
               if (type === 'fetch' || type === 'map') {
-                const docsFetched = result.length;
+                const docsFetched = result ? result.length : 0;
 
                 cursorSpan.addLabels({
                   docsFetched

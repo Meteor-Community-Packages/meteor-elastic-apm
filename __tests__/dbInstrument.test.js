@@ -3,7 +3,7 @@ const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 const newMongoCursor = require('./mocks/mongoCursor');
 
-test('track meteor collection methods', () => {
+test('track meteor collection methods (fibers)', () => {
   const agent = newAgent();
   const Meteor = newMeteor();
   const MongoCursor = newMongoCursor();
@@ -20,6 +20,39 @@ test('track meteor collection methods', () => {
   expect(agent.startSpan.mock.calls.length).toBe(1);
   expect(agent.startSpan.mock.calls[0][0]).toBe(`${testCollection._name}.find`);
   expect(agent.startSpan.mock.calls[0][1]).toBe('db');
+});
+
+test('track meteor collection methods (callback)', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  Meteor.Collection.prototype.insert = function(data, callback) {
+    setTimeout(() => callback(), 100);
+  };
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  agent.currentTransaction = agent.startTransaction();
+
+  const testCollection = new Meteor.Collection();
+  testCollection._name = 'testCollection';
+
+  return new Promise((res, rej) => {
+    testCollection.insert({ _id: 1 }, function(err) {
+      if (err) {
+        rej(err);
+      } else {
+        res(
+          Promise.resolve().then(() => {
+            expect(agent.startSpan.mock.calls.length).toBe(1);
+            expect(agent.startSpan.mock.calls[0][0]).toBe(`${testCollection._name}.insert`);
+            expect(agent.startSpan.mock.calls[0][1]).toBe('db');
+          })
+        );
+      }
+    });
+  });
 });
 
 test('catch collection exceptions', () => {
@@ -240,4 +273,43 @@ test('ignore cursor method if transaction is undefined', () => {
   cursor.fetch();
 
   expect(agent.startSpan.mock.calls.length).toBe(0);
+});
+
+test('catch cursor exceptions', () => {
+  const agent = newAgent();
+  const Meteor = newMeteor();
+  const MongoCursor = newMongoCursor();
+
+  MongoCursor.prototype.fetch = () => {
+    throw new Error();
+  };
+
+  instrumentDB(agent, Meteor, MongoCursor);
+
+  agent.currentTransaction = agent.startTransaction();
+  const span = agent.startSpan();
+  agent.currentTransaction.__span = span;
+
+  const cursor = new MongoCursor();
+
+  cursor._cursorDescription = {
+    collectionName: 'test',
+    options: {
+      fields: { field1: 1 },
+      sort: { field1: 1 },
+      limit: 1
+    }
+  };
+
+  expect(() => {
+    cursor.fetch();
+  }).toThrow();
+
+  expect(agent.startSpan.mock.calls.length).toBe(2);
+  expect(agent.startSpan.mock.calls[1][0]).toBe('test:fetch');
+  expect(agent.startSpan.mock.calls[1][1]).toBe('db');
+  expect(span.end.mock.calls.length).toBe(1);
+  expect(agent.captureError.mock.calls.length).toBe(1);
+
+  MongoCursor.prototype.fetch = jest.fn();
 });
