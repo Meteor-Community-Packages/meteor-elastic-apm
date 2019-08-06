@@ -4,7 +4,7 @@ import shimmer from 'shimmer';
 
 import { HTTP, HTTP_OUTCOMING } from '../constants';
 
-function start(agent, WebApp) {
+function start(agent) {
   shimmer.wrap(http, 'request', function(original) {
     return function(options, callback) {
       // we don't want to catch elastic requests, it causes recursive requests handling
