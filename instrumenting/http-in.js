@@ -3,6 +3,9 @@ import { HTTP_INCOMING, EXECUTION, SENDING } from '../constants';
 function start(agent, WebApp) {
   WebApp.connectHandlers.use(function(req, res, next) {
     const transaction = agent.startTransaction(`${req.method}:${req.url}`, HTTP_INCOMING);
+    transaction.setLabel('url', `${req.url}`);
+    transaction.setLabel('method', `${req.method}`);
+    
     const span = agent.startSpan(EXECUTION);
 
     res.on('finish', () => {
@@ -17,6 +20,7 @@ function start(agent, WebApp) {
   
       if (route) {
         transaction.name = `${req.method}:${route}`;
+        transaction.setLabel('route', `${route}`);
       }
 
       span.end();
