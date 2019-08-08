@@ -2,10 +2,9 @@ import http from 'http';
 import url from 'url';
 import shimmer from 'shimmer';
 
-import { HTTP, HTTP_OUTCOMING, HTTP_INCOMING, EXECUTION, SENDING } from '../constants';
+import { HTTP, HTTP_OUTCOMING } from '../constants';
 
-function start(agent, WebApp) {
-  // monitor outcoming http requests
+function start(agent) {
   shimmer.wrap(http, 'request', function(original) {
     return function(options, callback) {
       // we don't want to catch elastic requests, it causes recursive requests handling
@@ -51,27 +50,6 @@ function start(agent, WebApp) {
 
       return request;
     };
-  });
-
-  // monitor incoming http request
-  WebApp.connectHandlers.use('/', function(req, res, next) {
-    const transaction = agent.startTransaction(`${req.method}:${req.url}`, HTTP_INCOMING);
-    const span = agent.startSpan(EXECUTION);
-
-    res.on('finish', () => {
-      span.end();
-      transaction.__span = agent.startSpan(SENDING);
-    });
-    res.socket.on('close', () => {
-      if (transaction) {
-        if (transaction.__span) {
-          transaction.__span.end();
-        }
-        transaction.end();
-      }
-    });
-
-    next();
   });
 }
 
