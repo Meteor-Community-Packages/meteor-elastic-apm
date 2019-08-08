@@ -1,6 +1,6 @@
 {
   "name": "meteor-elastic-apm",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Performance Monitoring for Meteor based on Elastic APM",
   "main": "meteor-elastic-apm.js",
   "scripts": {
