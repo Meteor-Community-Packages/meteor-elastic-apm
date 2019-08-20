@@ -12,19 +12,17 @@ function start(agent, Meteor, MongoCursor) {
         const dbExecSpan = agent.startSpan(`${collName}.${func}`, DB);
 
         function closeSpan(exception, result) {
-          if (exception) {
-            if (dbExecSpan) {
-              dbExecSpan.addLabels({
-                status: 'fail',
-                exception
-              });
-            }
-
-            agent.captureError(exception);
-          }
-
           if (!dbExecSpan) {
             return;
+          }
+
+          if (exception) {
+            dbExecSpan.addLabels({
+              status: 'fail',
+              exception
+            });
+
+            agent.captureError(exception);
           }
 
           if (func === 'insert') {
@@ -119,16 +117,15 @@ function start(agent, Meteor, MongoCursor) {
 
         function closeSpan(ex, result) {
           if (transaction) {
-            if (ex) {
-              transaction.__span.addLabels({
-                status: 'fail',
-                exception: ex
-              });
-            }
-
             const cursorSpan = transaction.__span;
-
             if (cursorSpan) {
+              if (ex) {
+                transaction.__span.addLabels({
+                  status: 'fail',
+                  exception: ex
+                });
+              }
+
               if (type === 'fetch' || type === 'map') {
                 const docsFetched = result ? result.length : 0;
 

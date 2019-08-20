@@ -25,7 +25,10 @@ function start(agent) {
       const transaction = agent.currentTransaction || agent.startTransaction(eventName, eventType);
       const span = agent.startSpan(eventName, HTTP);
 
-      transaction.__span = span;
+      if (transaction) {
+        transaction.__span = span;
+      }
+
       const request = original.call(this, options, callback);
 
       const requestEnd = function(error) {
