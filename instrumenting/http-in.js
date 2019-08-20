@@ -1,4 +1,4 @@
-import { HTTP_INCOMING, EXECUTION, SENDING } from '../constants';
+import { HTTP_INCOMING, EXECUTION } from '../constants';
 
 function start(agent, WebApp) {
   WebApp.connectHandlers.use(function(req, res, next) {
@@ -24,15 +24,7 @@ function start(agent, WebApp) {
       }
 
       span.end();
-      transaction.__span = agent.startSpan(SENDING);
-    });
-    res.socket.on('close', () => {
-      if (transaction) {
-        if (transaction.__span) {
-          transaction.__span.end();
-        }
-        transaction.end();
-      }
+      transaction.end();
     });
 
     next();

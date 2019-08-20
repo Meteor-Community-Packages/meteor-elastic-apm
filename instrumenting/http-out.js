@@ -2,7 +2,7 @@ import http from 'http';
 import url from 'url';
 import shimmer from 'shimmer';
 
-import { HTTP, HTTP_OUTCOMING } from '../constants';
+import { HTTP, HTTP_OUTGOING } from '../constants';
 
 function start(agent) {
   shimmer.wrap(http, 'request', function(original) {
@@ -21,7 +21,7 @@ function start(agent) {
       if (!host) host = apmOptions.hostname;
 
       const eventName = `${method}://${host}${path}`;
-      const eventType = HTTP_OUTCOMING;
+      const eventType = HTTP_OUTGOING;
       const transaction = agent.currentTransaction || agent.startTransaction(eventName, eventType);
       const span = agent.startSpan(eventName, HTTP);
 
@@ -36,7 +36,7 @@ function start(agent) {
           if (transaction.__span) {
             transaction.__span.end();
           }
-          if (transaction.type === HTTP_OUTCOMING) {
+          if (transaction.type === HTTP_OUTGOING) {
             transaction.end();
           }
         }
