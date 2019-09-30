@@ -12,7 +12,8 @@ function start(agent, Session) {
           agent.setCustomContext(msg.params || {});
           agent.setUserContext({ id: this.userId || 'Not authorized' });
 
-          if (transaction) {
+          // _FilesCollectionWrite_ is a prefix for meteor-methods used by meteor/ostrio:files. It sends files via DDP to the server. Monitoring it would send the file - byte-serialized - on to the monitoring system.
+          if (transaction && (!msg.method || !msg.method.startsWith('_FilesCollectionWrite_'))) {
             transaction.addLabels({
               params: JSON.stringify(msg.params)
             });
