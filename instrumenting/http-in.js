@@ -8,8 +8,6 @@ function start(agent, WebApp) {
       transaction.setLabel('method', `${req.method}`);
     }
 
-    const span = agent.startSpan(EXECUTION);
-
     res.on('finish', () => {
       let route = req.originalUrl;
       if (req.originalUrl.endsWith(req.url.slice(1)) && req.url.length > 1) {
@@ -25,9 +23,6 @@ function start(agent, WebApp) {
         transaction.setLabel('route', `${route}`);
       }
 
-      if (span) {
-        span.end();
-      }
       if (transaction) {
         transaction.end();
       }
