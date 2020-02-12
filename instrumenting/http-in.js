@@ -1,4 +1,4 @@
-import { HTTP_INCOMING, EXECUTION } from '../constants';
+import { HTTP_INCOMING } from '../constants';
 
 function start(agent, WebApp) {
   WebApp.connectHandlers.use(function(req, res, next) {
