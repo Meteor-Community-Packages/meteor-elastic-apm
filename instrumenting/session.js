@@ -4,7 +4,13 @@ function start(agent, Session) {
   function wrapSession(sessionProto) {
     shimmer.wrap(sessionProto, 'processMessage', function(original) {
       return function(msg) {
-        if (msg.msg === 'method' || msg.msg === 'sub') {
+        if (
+          (msg.msg === 'method' &&
+            // _FilesCollectionWrite_ is a prefix for meteor-methods used by meteor/ostrio:files which is used to
+            // send files via DDP to the server. Monitoring these routes send the file - byte-serialized - to the monitoring system.
+            !msg.method.startsWith('_FilesCollectionWrite_')) ||
+          msg.msg === 'sub'
+        ) {
           const name = msg.msg === 'method' ? msg.method : msg.name;
           const type = msg.msg;
           const transaction = agent.startTransaction(name, type);
