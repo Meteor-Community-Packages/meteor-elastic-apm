@@ -41,6 +41,7 @@ Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodej
 ## What it monitors
 
 1. Meteor methods: method params, result, exceptions, stack trace
+   * Ignores methods starting with `_FilesCollectionWrite_`. (See: https://github.com/Meteor-Community-Packages/meteor-elastic-apm/issues/30)
 2. Meteor pub/sub: tracks publications response time, params, exceptions, result
 3. Meteor collection methods(find, insert, etc...): params, result, execution time
 4. MongoDB cursor method(fetch, map, etc...): params, result, execution time
