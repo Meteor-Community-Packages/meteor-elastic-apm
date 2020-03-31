@@ -38,6 +38,11 @@ Agent.start(options);
 
 Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodejs/current/advanced-setup.html)
 
+In addition, this plugin supports the following Agent options:
+
+* active - Boolean value which determins if monitoring is active. Default: `true`
+* disableMeteorInstrumentations - An array of meteor related instrumentations which should not be recorded. Default: `[]`. Possible values: `['methods', 'http-out', 'session', 'subscription', 'async', 'db, 'metrics']`
+
 ## What it monitors
 
 1. Meteor methods: method params, result, exceptions, stack trace
@@ -53,6 +58,13 @@ Complete list of [Agent options](https://www.elastic.co/guide/en/apm/agent/nodej
 
 From version 2.2.0 the package collects and sends meteor specific metrics to the apm-server.
 You can learn how it works and how to use it in [Metrics docs](./METRICS.md)
+
+## Performance
+
+If you discover significant performance implications, you can disable any of the metrics by adding the configuration `disableMeteorInstrumentations`
+and specifying in an array which of the metrics you want to disable: `['methods', 'http-out', 'session', 'subscription', 'async', 'db, 'metrics']`.
+
+Please also have a look at the documentation of the underlying library [`apm-agent-nodejs`](https://github.com/elastic/apm-agent-nodejs)
 
 ## Screenshots
 
