@@ -18,22 +18,22 @@
     "url": "https://github.com/kschingiz/meteor-elastic-apm/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "babel-jest": "^24.8.0",
+    "@babel/core": "^7.9.0",
+    "babel-jest": "^25.2.4",
     "babel-preset-env": "^1.7.0",
-    "codecov": "^3.5.0",
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^3.3.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-prettier": "^3.0.0",
-    "jest": "^24.8.0",
+    "codecov": "^3.6.5",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.2.4",
     "prettier": "1.15.2"
   },
   "homepage": "https://github.com/kschingiz/meteor-elastic-apm#readme",
   "dependencies": {
-    "elastic-apm-node": "^3.3.0",
-    "fibers": "^4.0.1",
+    "elastic-apm-node": "^3.5.0",
+    "fibers": "^4.0.2",
     "shimmer": "^1.2.1"
   }
 }
