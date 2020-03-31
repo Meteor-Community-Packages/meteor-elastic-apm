@@ -30,23 +30,31 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
 
     if (config.active !== false) {
       try {
+        const disabled = new Set(config.disableMeteorInstrumentations);
+
         // Must be called before any other route is registered on WebApp.
         instrumentHttpIn(Agent, WebApp);
 
         Meteor.startup(() => {
           try {
-            hackDB();
-
-            instrumentMethods(Agent, Meteor);
-            instrumentHttpOut(Agent, WebApp);
-            instrumentSession(Agent, Session);
-            instrumentSubscription(Agent, Subscription);
-            instrumentAsync(Agent, Fibers);
-            instrumentDB(Agent, Meteor, MongoCursor);
-
             startAgent.apply(Agent, args);
 
-            startMetrics(Agent);
+            Object.entries({
+              methods: () => instrumentMethods(Agent, Meteor),
+              'http-out': () => instrumentHttpOut(Agent, WebApp),
+              session: () => instrumentSession(Agent, Session),
+              subscription: () => instrumentSubscription(Agent, Subscription),
+              async: () => instrumentAsync(Agent, Fibers),
+              db: () => {
+                hackDB();
+                instrumentDB(Agent, Meteor, MongoCursor);
+              },
+              metrics: () => startMetrics(Agent)
+            }).forEach(([name, fn]) => {
+              if (!disabled.has(name)) {
+                fn();
+              }
+            });
 
             Agent.logger.info('meteor-elastic-apm completed instrumenting');
           } catch (e) {
