@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 Package.describe({
   name: 'kschingiz:meteor-elastic-apm',
-  version: '2.3.0',
+  version: '2.4.0',
   // Brief, one-line summary of the package.
   summary: 'Performance monitoring for Meteor based on Elastic APM',
   // URL to the Git repository containing the source code for this package.
