@@ -28,10 +28,8 @@ Package.onUse(function(api) {
     'minimongo',
     'livedata',
     'mongo-livedata',
-    'ejson',
     'ddp-common',
-    'underscore',
-    'http',
+    'webapp',
     'random'
   ]);
 
