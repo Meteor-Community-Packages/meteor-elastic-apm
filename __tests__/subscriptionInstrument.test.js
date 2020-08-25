@@ -1,4 +1,4 @@
-const instrumentSubscription = require('./../instrumenting/subscription');
+const instrumentSubscription = require('../instrumenting/subscription');
 const newAgent = require('./mocks/agent');
 const newSubscription = require('./mocks/subscription');
 

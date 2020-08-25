@@ -1,4 +1,4 @@
-const instrumentMethods = require('./../instrumenting/methods');
+const instrumentMethods = require('../instrumenting/methods');
 const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 

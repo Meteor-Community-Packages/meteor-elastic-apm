@@ -1,4 +1,4 @@
-const instrumentDB = require('./../instrumenting/db');
+const instrumentDB = require('../instrumenting/db');
 const newAgent = require('./mocks/agent');
 const newMeteor = require('./mocks/meteor');
 const newMongoCursor = require('./mocks/mongoCursor');

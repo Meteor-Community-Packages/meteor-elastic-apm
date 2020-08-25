@@ -1,4 +1,4 @@
-const instrumentSession = require('./../instrumenting/session');
+const instrumentSession = require('../instrumenting/session');
 const newAgent = require('./mocks/agent');
 const newSession = require('./mocks/session');
 

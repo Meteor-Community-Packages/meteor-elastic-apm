@@ -1,5 +1,5 @@
 const newFibers = require('./mocks/fibers');
-const instrumentAsync = require('./../instrumenting/async');
+const instrumentAsync = require('../instrumenting/async');
 const newAgent = require('./mocks/agent');
 
 test('track async execution', () => {
