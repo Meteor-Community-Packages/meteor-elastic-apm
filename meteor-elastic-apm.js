@@ -34,6 +34,7 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
 
         // Must be called before any other route is registered on WebApp.
         instrumentHttpIn(Agent, WebApp);
+        instrumentHttpOut(Agent)
 
         Meteor.startup(() => {
           try {
@@ -41,7 +42,6 @@ shimmer.wrap(Agent, 'start', function(startAgent) {
 
             Object.entries({
               methods: () => instrumentMethods(Agent, Meteor),
-              'http-out': () => instrumentHttpOut(Agent, WebApp),
               session: () => instrumentSession(Agent, Session),
               subscription: () => instrumentSubscription(Agent, Subscription),
               async: () => instrumentAsync(Agent, Fibers),
