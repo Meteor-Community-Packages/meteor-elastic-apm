@@ -1,12 +1,13 @@
 {
   "name": "meteor-elastic-apm",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Performance Monitoring for Meteor based on Elastic APM",
   "main": "meteor-elastic-apm.js",
   "scripts": {
     "lint": "eslint ./",
     "test": "jest --coverage",
-    "report-coverage": "codecov"
+    "report-coverage": "codecov",
+    "publish": "meteor npm i && npm prune --production && meteor publish && meteor npm i"
   },
   "repository": {
     "type": "git",

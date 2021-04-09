@@ -59,3 +59,4 @@ typings/
 
 # meteor package versions
 .versions
+.idea/
