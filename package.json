@@ -1,6 +1,6 @@
 {
   "name": "meteor-elastic-apm",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "Performance Monitoring for Meteor based on Elastic APM",
   "main": "meteor-elastic-apm.js",
   "scripts": {
@@ -19,22 +19,22 @@
     "url": "https://github.com/kschingiz/meteor-elastic-apm/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "babel-jest": "^25.2.4",
+    "@babel/core": "^7.13.15",
+    "babel-jest": "^25.5.1",
     "babel-preset-env": "^1.7.0",
-    "codecov": "^3.7.1",
+    "codecov": "^3.8.1",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "jest": "^25.2.4",
-    "prettier": "1.15.2"
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^25.5.4",
+    "prettier": "1.19.1"
   },
   "homepage": "https://github.com/kschingiz/meteor-elastic-apm#readme",
   "dependencies": {
-    "elastic-apm-node": "3.6.1",
-    "fibers": "^4.0.2",
+    "elastic-apm-node": "3.13.0",
+    "fibers": "^4.0.3",
     "shimmer": "1.2.1"
   }
 }
