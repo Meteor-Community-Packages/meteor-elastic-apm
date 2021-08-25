@@ -52,7 +52,7 @@ function start(agent, Meteor) {
     });
   }
 
-  const methodHandlers = Meteor.default_server.method_handlers;
+  const methodHandlers = Meteor.server.method_handlers;
   Object.keys(methodHandlers).forEach(methodName => wrapMethods(methodName, methodHandlers));
 
   shimmer.wrap(Meteor, 'methods', function(original) {
