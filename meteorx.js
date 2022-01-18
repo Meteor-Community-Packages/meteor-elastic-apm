@@ -11,7 +11,7 @@ function getSession() {
     headers: []
   };
 
-  const server = Meteor.default_server;
+  const server = Meteor.server;
 
   server._handleConnect(fakeSocket, {
     msg: 'connect',

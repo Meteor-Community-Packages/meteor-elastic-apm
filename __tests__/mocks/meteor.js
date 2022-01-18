@@ -15,12 +15,12 @@ function newMeteor() {
     publish: jest.fn(),
     Collection,
     methods(methodsMap) {
-      this.default_server.method_handlers = {
-        ...this.default_server.method_handlers,
+      this.server.method_handlers = {
+        ...this.server.method_handlers,
         ...methodsMap
       };
     },
-    default_server: {
+    server: {
       method_handlers: {}
     }
   };
