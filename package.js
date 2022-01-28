@@ -17,7 +17,7 @@ Npm.depends({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('METEOR@1.7');
+  api.versionsFrom('METEOR@2.4');
 
   api.use('kschingiz:meteor-measured@1.0.3');
   api.imply('kschingiz:meteor-measured');

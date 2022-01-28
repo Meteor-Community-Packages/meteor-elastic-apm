@@ -3,11 +3,11 @@ import { DB } from '../constants';
 
 function start(agent, Meteor, MongoCursor) {
   const meteorCollectionProto = Meteor.Collection.prototype;
-  ['findOne', 'find', 'update', 'remove', 'insert', '_ensureIndex', '_dropIndex'].forEach(function(
+  ['findOne', 'find', 'update', 'remove', 'insert', 'createIndex', '_dropIndex'].forEach(function (
     func
   ) {
-    shimmer.wrap(meteorCollectionProto, func, function(original) {
-      return function(...args) {
+    shimmer.wrap(meteorCollectionProto, func, function (original) {
+      return function (...args) {
         const collName = this._name;
         const dbExecSpan = agent.startSpan(`${collName}.${func}`, DB);
 
@@ -19,7 +19,7 @@ function start(agent, Meteor, MongoCursor) {
           if (exception) {
             dbExecSpan.addLabels({
               status: 'fail',
-              exception
+              exception,
             });
 
             agent.captureError(exception);
@@ -30,7 +30,7 @@ function start(agent, Meteor, MongoCursor) {
 
             dbExecSpan.addLabels({
               document: JSON.stringify(document),
-              docInserted: result
+              docInserted: result,
             });
           } else if (func === 'find' || func === 'findOne') {
             const [selector = {}, options = {}] = args;
@@ -44,7 +44,7 @@ function start(agent, Meteor, MongoCursor) {
             dbExecSpan.addLabels({
               selector: JSON.stringify(selector),
               options: JSON.stringify(options),
-              docsFetched
+              docsFetched,
             });
           } else if (func === 'update') {
             const [selector = {}, modifier = {}, options = {}] = args;
@@ -53,14 +53,14 @@ function start(agent, Meteor, MongoCursor) {
               selector: JSON.stringify(selector),
               options: JSON.stringify(options),
               modifier: JSON.stringify(modifier),
-              docsUpdated: result
+              docsUpdated: result,
             });
           } else if (func === 'remove') {
             const [selector = {}] = args;
 
             dbExecSpan.addLabels({
               selector: JSON.stringify(selector),
-              docsRemoved: result
+              docsRemoved: result,
             });
           }
 
@@ -74,7 +74,7 @@ function start(agent, Meteor, MongoCursor) {
 
             if (dbExecSpan) {
               dbExecSpan.addLabels({
-                async: true
+                async: true,
               });
             }
 
@@ -100,11 +100,11 @@ function start(agent, Meteor, MongoCursor) {
   });
 
   const cursorProto = MongoCursor.prototype;
-  ['forEach', 'map', 'fetch', 'count', 'observeChanges', 'observe', 'rewind'].forEach(function(
+  ['forEach', 'map', 'fetch', 'count', 'observeChanges', 'observe', 'rewind'].forEach(function (
     type
   ) {
-    shimmer.wrap(cursorProto, type, function(original) {
-      return function(...args) {
+    shimmer.wrap(cursorProto, type, function (original) {
+      return function (...args) {
         const cursorDescription = this._cursorDescription;
 
         const transaction = agent.currentTransaction;
@@ -122,7 +122,7 @@ function start(agent, Meteor, MongoCursor) {
               if (ex) {
                 transaction.__span.addLabels({
                   status: 'fail',
-                  exception: ex
+                  exception: ex,
                 });
               }
 
@@ -130,12 +130,12 @@ function start(agent, Meteor, MongoCursor) {
                 const docsFetched = result ? result.length : 0;
 
                 cursorSpan.addLabels({
-                  docsFetched
+                  docsFetched,
                 });
               }
 
               cursorSpan.addLabels({
-                selector: JSON.stringify(cursorDescription.selector)
+                selector: JSON.stringify(cursorDescription.selector),
               });
 
               if (cursorDescription.options) {
@@ -144,7 +144,7 @@ function start(agent, Meteor, MongoCursor) {
                 cursorSpan.addLabels({
                   fields: JSON.stringify(fields || {}),
                   sort: JSON.stringify(sort || {}),
-                  limit
+                  limit,
                 });
               }
 

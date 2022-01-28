@@ -6,7 +6,7 @@ function newMeteor() {
   Collection.prototype.update = jest.fn();
   Collection.prototype.remove = jest.fn();
   Collection.prototype.insert = jest.fn();
-  Collection.prototype._ensureIndex = jest.fn();
+  Collection.prototype.createIndex = jest.fn();
   Collection.prototype._dropIndex = jest.fn();
 
   return {
