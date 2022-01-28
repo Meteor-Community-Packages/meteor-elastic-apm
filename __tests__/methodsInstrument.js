@@ -27,12 +27,12 @@ test('close transaction with method result', () => {
     }
   });
 
-  Meteor.default_server.method_handlers.method1();
+  Meteor.server.method_handlers.method1();
 
   expect(agent.currentTransaction.end.mock.calls.length).toBe(1);
   expect(agent.currentTransaction.end.mock.calls[0][0]).toBe('success');
 
-  Meteor.default_server.method_handlers.method2();
+  Meteor.server.method_handlers.method2();
 
   expect(agent.currentTransaction.end.mock.calls.length).toBe(2);
   expect(agent.currentTransaction.end.mock.calls[1][0]).toBe('success');
@@ -51,7 +51,7 @@ test('ignore if transaction is undefined', () => {
 
   instrumentMethods(agent, Meteor);
 
-  Meteor.default_server.method_handlers.method1();
+  Meteor.server.method_handlers.method1();
 });
 
 test('close transaction and its span with method result', () => {
@@ -79,7 +79,7 @@ test('close transaction and its span with method result', () => {
     }
   });
 
-  Meteor.default_server.method_handlers.method1();
+  Meteor.server.method_handlers.method1();
 
   expect(agent.currentTransaction.end.mock.calls.length).toBe(1);
   expect(agent.currentTransaction.end.mock.calls[0][0]).toBe('success');
@@ -113,14 +113,14 @@ test('catch meteor method exception', () => {
   });
 
   expect(() => {
-    Meteor.default_server.method_handlers.method1();
+    Meteor.server.method_handlers.method1();
   }).toThrow();
 
   expect(agent.captureError.mock.calls.length).toBe(1);
   expect(agent.captureError.mock.calls[0][0].message).toBe('Test error 1');
 
   expect(() => {
-    Meteor.default_server.method_handlers.method2();
+    Meteor.server.method_handlers.method2();
   }).toThrow();
 
   expect(agent.captureError.mock.calls.length).toBe(2);
@@ -148,7 +148,7 @@ test('transform string exception into Error object', () => {
   instrumentMethods(agent, Meteor);
 
   expect(() => {
-    Meteor.default_server.method_handlers.textError();
+    Meteor.server.method_handlers.textError();
   }).toThrow();
 
   expect(agent.captureError.mock.calls.length).toBe(1);
