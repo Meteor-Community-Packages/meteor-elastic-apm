@@ -1,6 +1,6 @@
 {
   "name": "meteor-elastic-apm",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Performance Monitoring for Meteor based on Elastic APM",
   "main": "meteor-elastic-apm.js",
   "scripts": {
@@ -11,29 +11,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kschingiz/meteor-elastic-apm.git"
+    "url": "git+https://github.com/Meteor-Community-Packages/meteor-elastic-apm.git"
   },
   "author": "Shynggys Kengessov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kschingiz/meteor-elastic-apm/issues"
+    "url": "https://github.com/Meteor-Community-Packages/meteor-elastic-apm/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.15",
+    "@babel/core": "^7.16.12",
     "babel-jest": "^25.5.1",
     "babel-preset-env": "^1.7.0",
-    "codecov": "^3.8.1",
+    "codecov": "^3.8.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-prettier": "^3.4.1",
     "jest": "^25.5.4",
     "prettier": "1.19.1"
   },
   "homepage": "https://github.com/kschingiz/meteor-elastic-apm#readme",
   "dependencies": {
-    "elastic-apm-node": "3.13.0",
+    "elastic-apm-node": "3.27.0",
     "fibers": "^4.0.3",
     "shimmer": "1.2.1"
   }
