@@ -28,7 +28,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^3.4.1",
-    "jest": "^25.5.4",
+    "jest": "^29.3.1",
     "prettier": "1.19.1"
   },
   "homepage": "https://github.com/kschingiz/meteor-elastic-apm#readme",
